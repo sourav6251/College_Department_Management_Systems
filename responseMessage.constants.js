@@ -9,8 +9,7 @@ export const RESPONSE_MESSAGES = {
     INTERNAL_ERROR: "Internal Error",
     SYLLABUS_CREATED: "Syllabus created successfully",
     SYLLABUS_UPDATED: "Syllabus update success",
-    SYLLABUS_UPDATED: "Syllabus update success",
-    SYLLABUS_NOT_EXIST: "Syllabus doesn't exist",
+    SYLLABUS_DELETE: "Syllabus deleted success",
     NO_CONTENT: "No content found",
 
 

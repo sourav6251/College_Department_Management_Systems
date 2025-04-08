@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-const syllebusSchema = new Schema({
+const syllabusSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: "user",
@@ -41,4 +41,4 @@ const syllebusSchema = new Schema({
     },
 }, { timestamps: true });
 
-export const Syllebus = model("syllebus", syllebusSchema);
+export const Syllabus = model("syllabus", syllabusSchema);
