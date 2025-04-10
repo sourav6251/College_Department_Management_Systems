@@ -21,7 +21,7 @@ const notificationSchema =new Schema({
                 default : 'https://img.freepik.com/premium-vector/user-circle-with-blue-gradient-circle_78370-4727.jpg?w=826'
             },
             type : {
-                type : String ,
+                type : string ,
                 enum : ['image' , 'pdf'],
                 required : true
             }
@@ -45,4 +45,4 @@ const notificationSchema =new Schema({
 
 
 
-export const Notifications = model('notification',notificationSchema)
+export const Notification = model('notification',notificationSchema)

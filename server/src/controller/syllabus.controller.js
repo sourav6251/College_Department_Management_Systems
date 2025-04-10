@@ -21,20 +21,11 @@ class SyllabusController {
                 success: false,
                 error: error
             });
-        } 
+        }
     }
 
     async updateSyllabus(req, res) {
         try {
-            const syllabusExist=await syllabusService.findById(req.params.syllabusId);
-            if(!syllabusExist){
-                return sendResponse(res, {
-                    status: HTTP_STATUS.BAD_REQUEST,
-                    message: RESPONSE_MESSAGES.SYLLABUS_NOT_EXIST,
-                    success: false,
-                    // error: error
-                });
-            }
             const syllabus = await syllabusService.updateSyllabus(req.body, req.params.syllabusId);
 
             return sendResponse(res, {
@@ -62,7 +53,7 @@ class SyllabusController {
             if (syllabus) {
                 return sendResponse(res, {
                     status: HTTP_STATUS.OK,
-                    message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
+                    message: RESPONSE_MESSAGES.FETCH_ALL_SYLLABUS,
                     success: true,
                     data: syllabus,
                 });
@@ -71,7 +62,7 @@ class SyllabusController {
 
             return sendResponse(res, {
                 status: HTTP_STATUS.NO_CONTENT,
-                message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
+                message: RESPONSE_MESSAGES.FETCH_ALL_SYLLABUS,
                 success: true,
                 data: syllabus,
             });

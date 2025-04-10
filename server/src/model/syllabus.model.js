@@ -1,5 +1,22 @@
 import { model, Schema } from "mongoose";
 
+
+const media=new Schema({
+    mediaUrl: {
+        type: String,
+        required: [true, "media url is required !"],
+        maxLength: [100, "media url should be in 100 letter"],
+        minLength: [3, "media url must be in 3 letter "],
+        trim: true,
+    },
+    mediaID: {
+        type: String,
+        required: [true, "media id is required !"],
+        maxLength: [100, "media id should be in 100 letter"],
+        minLength: [3, "media id must be in 3 letter "],
+        trim: true,
+    },
+},{ timestamps: true });
 const syllabusSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
@@ -23,22 +40,9 @@ const syllabusSchema = new Schema({
         minLength: [3, "paper code must be in 3 letter "],
         trim: true,
     },
-    media: {
-        mediaUrl: {
-            type: String,
-            required: [true, "media url is required !"],
-            maxLength: [100, "media url should be in 100 letter"],
-            minLength: [3, "media url must be in 3 letter "],
-            trim: true,
-        },
-        mediaID: {
-            type: String,
-            required: [true, "media id is required !"],
-            maxLength: [100, "media id should be in 100 letter"],
-            minLength: [3, "media id must be in 3 letter "],
-            trim: true,
-        },
-    },
+    media: [media],
 }, { timestamps: true });
+
+
 
 export const Syllabus = model("syllabus", syllabusSchema);

@@ -31,9 +31,5 @@ class SyllabusService {
         const result = await Syllabus.findByIdAndDelete(id);
         return result;
     }
-
-    async findById(id){
-        return await Syllabus.findById(id);
-    }
 }
 export default new SyllabusService();

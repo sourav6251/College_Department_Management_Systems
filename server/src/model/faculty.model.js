@@ -37,4 +37,4 @@ const facultySchema = new Schema({
     ],
 } , { timestamps : true})
 
-export const Faculties = model('faculty' , facultySchema)
+export const Facultys = model('faculty' , facultySchema)
