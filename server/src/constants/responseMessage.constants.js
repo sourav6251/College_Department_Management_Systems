@@ -14,4 +14,14 @@ export const RESPONSE_MESSAGES = {
     NO_CONTENT: "No content found",
 
 
+    NOTIFOICATION_CREATED: "Notification created successfully",
+    NOTIFOICATION_UPDATED: "Notification update success",
+    NOTIFOICATION_DELETE: "Notification deleted success",
+
+    NOTIFOICATION_NOT_EXIST: "Notification doesn't exist",
+    NOTIFOICATION_NOT_FOUND: "Notification not found",
+    FETCH_ALL_NOTIFOICATION : "Fetch all Notification list",
+    NO_NOTIFOICATION: "No notification are available",
+    
+
 }
