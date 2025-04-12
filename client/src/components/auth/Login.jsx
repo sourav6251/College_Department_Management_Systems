@@ -1,128 +1,146 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { toast, Toaster } from "sonner";
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { setLogin, setRole, logoutUser } from "../../redux/UserState";
+import { motion } from "framer-motion";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 
-export const Login = () => {
-    const [showPassword, setPassword] = useState(false);
-    const [loginForm, setLoginForm] = useState({
-        email: "",
-        password: "",
-    });
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+});
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+export function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
 
-    const handleChanges = (e) => {
-        setLoginForm({
-            ...loginForm,
-            [e.target.id]: e.target.value,
-        });
-    };
+  const navigate=useNavigate();
 
-    const togglePassword = () => {
-        setPassword((prev) => !prev);
-    };
+  function onSubmit(values) {
+    console.log("submitted values:", values);
+  }
 
-    const formSubmit = (e) => {
-        e.preventDefault();
-        console.log(loginForm);
+  const register=()=>{
+    navigate('/register')
+  }
 
-        dispatch(setLogin(true));
-        dispatch(setRole("faculty")); 
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300">
 
-        toast.success("Logged in successfully 🚀");
-        navigate("/");
-    };
-    const register=(e)=>{
-        navigate("/register")
-    }
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl"
+      >
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">Sign in</h2>
+          <p className="text-gray-500 text-sm mt-2">
+            Login to your account
+          </p>
+        </div>
 
-    return (
-        <>
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300">
-                <Toaster richColors position="top-right" />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
+            {/* Username Field */}
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Username
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your username"
+                      className="focus-visible:ring-blue-400"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl"
-                >
-                    <div className="text-center mb-6">
-                        <h2 className="text-3xl font-bold text-gray-800">
-                            Sign in
-                        </h2>
-                        <p className="text-gray-500 text-sm">
-                            Login into your account
-                        </p>
+            {/* Password Field */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex items-center border border-gray-300 rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        className="border-0 focus-visible:ring-0"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="px-3 py-2 text-gray-600 hover:text-blue-500"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                    <form onSubmit={formSubmit} className="space-y-4">
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Email / Phone no.
-                            </label>
-                            <input
-                                type="text"
-                                id="email"
-                                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                placeholder="Enter your email / phone no."
-                                required
-                                value={loginForm.email}
-                                onChange={handleChanges}
-                            />
-                        </div>
+            <Button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            >
+              Submit
+            </Button>
 
-                        <div>
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-medium text-gray-700"
-                            >
-                                Password
-                            </label>
-                            <div className="mt-1 flex items-center border border-gray-300 rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="password"
-                                    className="w-full px-4 py-2 rounded-l-lg focus:outline-none"
-                                    placeholder="Enter your password"
-                                    required
-                                    value={loginForm.password}
-                                    onChange={handleChanges}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={togglePassword}
-                                    className="px-3 py-2 text-gray-600 hover:text-blue-500"
-                                >
-                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
-                        >
-                            Submit
-                        </button>
-
-                        <p className="text-center text-sm text-gray-600 mt-2">
-                            Don't have any account?{" "}
-                            <span className="text-blue-500 hover:underline font-medium  cursor-pointer" onClick={register}>
-                                Register here
-                            </span>
-                        </p>
-                    </form>
-                </motion.div>
-            </div>
-        </>
-    );
-};
+            <p className="text-center text-sm text-gray-600 mt-4">
+              Don't have an account?{" "}
+              <span onClick={register} className="text-blue-500 hover:underline font-medium cursor-pointer">
+                Register here
+              </span>
+            </p>
+          </form>
+        </Form>
+      </motion.div>
+    </div>
+  );
+}

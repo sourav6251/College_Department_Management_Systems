@@ -1,171 +1,171 @@
 import { Link } from 'react-router-dom';
-import { Users, BookOpen, Calendar, Clock } from 'lucide-react';
-import { 
-  notices, 
-  meetings, 
-  syllabi,
-  faculty 
-} from '../../data/mockData';
-import { formatDate, formatTimeRange } from '../../lib/utils';
+import { Users, BookOpen, Calendar, Clock, Presentation } from 'lucide-react';
+import { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import TeachingSchedule from './TeachingSchedule';
 
 const DashboardFaculty = () => {
-  const currentFaculty = faculty[1]; // Sarah Johnson
-  const facultyMeetings = meetings.filter(meeting => 
-    meeting.attendees.includes(currentFaculty.id)
-  );
+  const [shrinkView, setShrinkView] = useState("");
+  
+  const viewSchedule = (id) => {
+    setShrinkView((prevId) => (prevId === id ? "" : id));
+  };
+
+  const syllabus = [
+    {
+      id: 1,
+      semester: 1,
+      paperCode: "CS101",
+      paperTitle: "Introduction to Programming",
+      uploadDate: "2023-05-15",
+      hasPdf: true,
+    },
+    {
+      id: 2,
+      semester: 1,
+      paperCode: "CS102",
+      paperTitle: "Computer Organization",
+      uploadDate: "2023-05-15",
+      hasPdf: true,
+    },
+    {
+      id: 3,
+      semester: 2,
+      paperCode: "CS201",
+      paperTitle: "Data Structures",
+      uploadDate: "2023-05-14",
+      hasPdf: true,
+    },
+    {
+      id: 4,
+      semester: 3,
+      paperCode: "CS301",
+      paperTitle: "Algorithm Design",
+      uploadDate: "2023-05-12",
+      hasPdf: true,
+    },
+    {
+      id: 5,
+      semester: 4,
+      paperCode: "CS401",
+      paperTitle: "Database Management Systems",
+      uploadDate: "2023-05-10",
+      hasPdf: true,
+    },
+  ];
+
+  const currentFaculty = 'Sourav'; 
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-blue-700">Faculty Dashboard</h1>
-        <p className="text-gray-600">Welcome back, {currentFaculty.name}</p>
+        <h1 className="text-2xl font-bold">Faculty Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back, {currentFaculty}</p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <ActionCard 
           icon={<Users className="h-6 w-6 text-blue-500" />}
           title="Upcoming Meetings"
           description="You have 2 scheduled meetings"
           linkText="View Schedule"
           linkHref="/meetings"
+          iconBackground='bg-[#BDCEF0]'
         />
         <ActionCard 
-          icon={<BookOpen className="h-6 w-6 text-emerald-500" />}
+          icon={<Presentation className="h-6 w-6 text-emerald-500" />}
           title="Course Syllabus"
           description="Manage your course materials"
           linkText="View Syllabus"
           linkHref="/syllabus"
+          iconBackground='bg-[#B1E3D3]'
         />
-        <ActionCard 
-          icon={<Clock className="h-6 w-6 text-purple-500" />}
-          title="Office Hours"
-          description="Update your availability"
-          linkText="Set Hours"
-          linkHref="/"
-        />
-      </div>
-
-      {/* Meetings & Notices */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <UpcomingMeetings meetings={facultyMeetings} />
-        <RecentNotices notices={notices} />
       </div>
 
       {/* Teaching Schedule */}
-      <TeachingSchedule syllabi={syllabi.slice(0, 3)} />
+      <TeachingSchedule 
+        syllabus={syllabus.slice(0, 3)}
+        shrinkView={shrinkView}
+        setShrinkView={setShrinkView}
+        viewSchedule={viewSchedule}
+      />
     </div>
   );
 };
 
-const ActionCard = ({ icon, title, description, linkText, linkHref }) => (
-  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-6 text-center">
-    <div className="flex flex-col items-center">
-      <div className="rounded-full bg-gray-100 p-3 mb-4">{icon}</div>
-      <h3 className="font-medium text-lg mb-1">{title}</h3>
-      <p className="text-gray-500 text-sm mb-4">{description}</p>
-      <Link to={linkHref} className="text-blue-600 hover:underline text-sm font-medium">
-        {linkText}
-      </Link>
-    </div>
-  </div>
+const ActionCard = ({ icon, title, description, linkText, linkHref,iconBackground }) => (
+  <Card className="hover:shadow-lg transition-shadow">
+    <CardContent className="p-6 flex flex-col items-center text-center">
+      <div className={`rounded-full ${iconBackground} p-3 mb-4`}>
+        {icon}
+      </div>
+      <CardTitle className="text-lg mb-1">{title}</CardTitle>
+      <CardDescription className="mb-4">{description}</CardDescription>
+    </CardContent>
+    <CardFooter className="justify-center p-0 pb-6">
+      <Button variant="link" className="text-primary" asChild>
+        <Link to={linkHref}>
+          {linkText}
+        </Link>
+      </Button>
+    </CardFooter>
+  </Card>
 );
 
-const RecentNotices = ({ notices }) => (
-  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-all">
-    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-      <h2 className="text-lg font-semibold text-blue-700">Recent Notices</h2>
-      <Link to="/notices" className="text-blue-500 hover:underline text-sm">View All</Link>
-    </div>
-    <div className="p-4">
-      <ul className="divide-y divide-gray-200">
-        {notices.map(notice => (
-          <li key={notice.id} className="py-3 flex items-start">
-            <div className="flex-shrink-0 mt-1">
-              <i className="far fa-file-pdf text-blue-500 text-lg"></i>
-            </div>
-            <div className="ml-3">
-              <h4 className="font-medium">{notice.title}</h4>
-              <p className="text-sm text-gray-600">Published on {formatDate(notice.publishDate)}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </div>
-);
-
-const UpcomingMeetings = ({ meetings }) => (
-  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-all">
-    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-      <h2 className="text-lg font-semibold text-blue-700">Upcoming Meetings</h2>
-      <Link to="/meetings" className="text-blue-500 hover:underline text-sm">View All</Link>
-    </div>
-    <div className="p-4">
-      {meetings.length > 0 ? (
-        <ul className="divide-y divide-gray-200">
-          {meetings.map(meeting => (
-            <li key={meeting.id} className="py-3">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white mr-3">
-                  <Calendar className="h-4 w-4" />
-                </div>
-                <h4 className="font-medium">{meeting.title}</h4>
-              </div>
-              <div className="ml-11">
-                <p className="text-sm text-gray-600 mb-1">{meeting.description}</p>
-                <div className="flex items-center text-xs text-gray-500">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  <span className="mr-3">{formatDate(meeting.date)}</span>
-                  <Clock className="h-3 w-3 mr-1" />
-                  <span>{formatTimeRange(meeting.startTime, meeting.endTime)}</span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="text-center py-4 text-gray-500">
-          No upcoming meetings scheduled
-        </div>
-      )}
-    </div>
-  </div>
-);
-
-const TeachingSchedule = ({ syllabi }) => (
-  <div className="bg-white rounded-lg shadow hover:shadow-lg transition-all mb-6">
-    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-      <h2 className="text-lg font-semibold text-blue-700">Your Teaching Schedule</h2>
-      <Link to="/syllabus" className="text-blue-500 hover:underline text-sm">View All Courses</Link>
-    </div>
-    <div className="p-4 grid grid-cols-1 gap-4">
-      {syllabi.map(syllabus => (
-        <div key={syllabus.id} className="bg-gray-50 rounded-lg p-4">
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="font-medium text-blue-700">{syllabus.paperTitle}</h3>
-              <p className="text-sm text-gray-600">Code: {syllabus.paperCode} • Semester {syllabus.semester}</p>
-            </div>
-            <button className="px-3 py-1 border text-sm rounded hover:bg-gray-100 transition">
-              View Syllabus
-            </button>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              Monday 9:00 AM
-            </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              Wednesday 9:00 AM
-            </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Room 101
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+// const TeachingSchedule = ({ syllabus, shrinkView, viewSchedule }) => {
+//   return (
+//     <Card className="w-full">
+//       <CardHeader className="flex flex-row justify-between items-center pb-2">
+//         <CardTitle>Your Teaching Schedule</CardTitle>
+//         <Button variant="link" className="p-0 h-auto" asChild>
+//           <Link to="/syllabus">View All Courses</Link>
+//         </Button>
+//       </CardHeader>
+//       <CardContent className="grid gap-4">
+//         {syllabus.map(item => (
+//           <div
+//             key={item.id}
+//             onClick={() => viewSchedule(item.id)}
+//             className={`p-4 rounded-lg hover:bg-accent cursor-pointer transition-colors ${
+//               shrinkView === item.id ? "bg-accent" : "bg-muted/50"
+//             }`}
+//           >
+//             <div className="flex justify-between items-start mb-2">
+//               <div>
+//                 <h3 className="font-medium">{item.paperTitle}</h3>
+//                 <p className="text-sm text-muted-foreground">
+//                   Code: {item.paperCode} • Semester {item.semester}
+//                 </p>
+//               </div>
+//               <Button
+//                 variant="outline"
+//                 size="sm"
+//                 onClick={(e) => {
+//                   e.stopPropagation();
+//                   viewSchedule(item.id);
+//                 }}
+//               >
+//                 View syllabus
+//               </Button>
+//             </div>
+//             <div className="mt-2 flex flex-wrap gap-2">
+//               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+//                 Monday 9:00 AM
+//               </span>
+//               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+//                 Wednesday 9:00 AM
+//               </span>
+//               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+//                 Room 101
+//               </span>
+//             </div>
+//           </div>
+//         ))}
+//       </CardContent>
+//     </Card>
+//   );
+// };
 
 export default DashboardFaculty;
