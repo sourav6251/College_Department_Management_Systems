@@ -1,9 +1,9 @@
-
 import { useEffect } from 'react';
-import { useAppSelector } from '@/redux/hooks';
+import { useThemeStore } from '@/store';
 
 export function ThemeProvider({ children }) {
-  const { isDarkMode } = useAppSelector((state) => state.theme);
+  const { theme } = useThemeStore();
+  const isDarkMode = theme === 'dark';
 
   useEffect(() => {
     const root = window.document.documentElement;

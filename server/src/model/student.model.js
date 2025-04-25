@@ -15,11 +15,9 @@ const studentSchema = new Schema({
         required : true
     },
     semester : {
-        type : String,
-        required : [true,'semester name is required'],
-        maxlength : [15,'semester name should be in 15 letter'],
-        minLength : [3,'semester name must be in 3 letter'],
-        trim : true
+        type :  Schema.Types.ObjectId,
+        ref : 'semester',
+        // required : true,
     }
 },{timestamps : true})
 

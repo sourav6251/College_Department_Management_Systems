@@ -17,7 +17,7 @@ class SyllabusValidation {
             }).min(3, "Paper code must be at least 3 characters")
               .max(10, "Paper code must not exceed 10 characters")
               .trim(),
-            media: z.object({
+            media: z.array({
                 mediaUrl: z.string({
                     required_error: "Media URL is required"
                 }).min(3, "Media URL must be at least 3 characters")

@@ -14,7 +14,7 @@ const meetingSchema = new Schema({
     },
     description: {
         type: String,
-        required: [true, 'description is required !'],
+        // required: [true, 'description is required !'],
         maxLength: [1000, 'description should be in 1000 letter'],
         minLength: [3, 'description must be in 3 letter '],
         trim: true,
@@ -38,4 +38,4 @@ const meetingSchema = new Schema({
     }
 
 }, { timestamps: true })
-export const Metting = model('metting', meetingSchema)
+export const Mettings = model('metting', meetingSchema)

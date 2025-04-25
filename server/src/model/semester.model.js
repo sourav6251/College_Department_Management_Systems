@@ -30,7 +30,7 @@ const semesterSchema = new Schema({
             paperCode : {
                 type : String ,
                 require : [true,'paperCode is required !!'],
-                maxLength : [10,'paperCode should be in 10 letter'],
+                maxLength : [15,'paperCode should be in 10 letter'],
                 minLength : [3,'paperCode  must be in 3 letter'],
                 trim : true
 
@@ -38,7 +38,7 @@ const semesterSchema = new Schema({
             paperName : {
                 type : String ,
                 require : [true,'paperName is required !!'],
-                maxLength : [10,'paperName should be in 10 letter'],
+                maxLength : [30,'paperName should be in 10 letter'],
                 minLength : [3,'paperName must be in 3 letter'],
                 trim : true
             }

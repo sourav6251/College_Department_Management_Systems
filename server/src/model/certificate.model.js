@@ -29,7 +29,7 @@ const certificateSchema = new Schema({
         minLength: [3, "paper name must be in 3 letter "],
         trim: true,
     },
-    studensNo: {
+    studentsNo: {
         type: Number,
         required: [true, "studens no is required !"],
         min: [1, "studens no must be greater than 1"],
@@ -45,6 +45,12 @@ const certificateSchema = new Schema({
         maxLength: [100, "designation should be in 100 letter"],
         minLength: [3, "designation must be in 3 letter "],
         trim: true,
+    },
+    status:{
+        type:String,
+        enum : ['reject' , 'pending','accept'],
+        default: 'pending',
+        required: true,
     }
 }, { timestamps: true });
 

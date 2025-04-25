@@ -53,7 +53,7 @@ class SyllabusController {
             if (syllabus) {
                 return sendResponse(res, {
                     status: HTTP_STATUS.OK,
-                    message: RESPONSE_MESSAGES.FETCH_ALL_SYLLABUS,
+                    message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
                     success: true,
                     data: syllabus,
                 });
@@ -62,7 +62,7 @@ class SyllabusController {
 
             return sendResponse(res, {
                 status: HTTP_STATUS.NO_CONTENT,
-                message: RESPONSE_MESSAGES.FETCH_ALL_SYLLABUS,
+                message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
                 success: true,
                 data: syllabus,
             });
