@@ -5,8 +5,11 @@ import { RESPONSE_MESSAGES } from "../constants/responseMessage.constants.js";
 
 class SyllabusController {
     async createSyllabus(req, res) {
+        console.log('Enter  into syllabus ');
+        
         try {
             const syllabus = await syllabusService.createSyllabus(req.body);
+console.log("syllabus",syllabus);
 
             return sendResponse(res, {
                 status: HTTP_STATUS.CREATED,
@@ -46,7 +49,7 @@ class SyllabusController {
 
     async showSyllabus(req, res) {
         try {
-            const syllabus = await syllabusService.showSyllabus(req.body);
+            const syllabus = await syllabusService.showSyllabus(req.params.departmentid);
             console.log(`syllabus => ${syllabus} `);
 
 

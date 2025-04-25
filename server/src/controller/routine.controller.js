@@ -1,94 +1,103 @@
 import { RESPONSE_MESSAGES } from "../constants/responseMessage.constants.js";
 import { HTTP_STATUS } from "../constants/statusCode.constants.js";
-import meetingService from "../services/meeting.service.js";
+import routineService from "../services/routine.service.js";
+// import routineService from "../services/routine.service.js";
 import { sendResponse } from "../utils/response.handler.js";
 
-class MeetingController {
-    async createMeeting(req, res) {
-        console.log("Enter into meeting ");
-        
+class RoutineController {
+    async createRoutine(req, res) {
         try {
-            const data = req.body;
-            console.log("data=>",data);
-            const meeting = await meetingService.createMeeting(data);
+            console.log("Enter into createRoutine");
+            
+            const routine = await routineService.createRoutine(req.body);
 
             return sendResponse(res, {
                 status: HTTP_STATUS.CREATED,
-                message: RESPONSE_MESSAGES.MEETING_CREATED || "Meeting created successfully",
+                message: RESPONSE_MESSAGES.ROUTINE_CREATED,
                 success: true,
-                data: meeting,
+                data: routine,
             });
         } catch (error) {
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
+                error: error,
             });
         }
     }
 
-    async showMeeting(req, res) {
+    async updateRoutine(req, res) {
         try {
-            const meetings = await meetingService.showMeeting(req.params.userid);
+            const routine = await routineService.updateRoutine(
+                req.params.routineId,
+                req.body
+            );
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
-                message: RESPONSE_MESSAGES.FETCH_SUCCESS || "Meetings fetched successfully",
+                message: RESPONSE_MESSAGES.ROUTINE_UPDATED,
                 success: true,
-                data: meetings,
+                data: routine,
             });
         } catch (error) {
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
+                error: error,
             });
         }
     }
 
-    async updateMeeting(req, res) {
+    async showRoutine(req, res) {
         try {
-            const id = req.params.meetingId;
-            const updatedMeeting = await meetingService.updateMeeting(id, req.body);
+            const routineId = req.params.userID;
+            let routine;
+            if (routineId) {
+                routine = await routineService.showRoutine(routineId);
+            } else {
+                routine = await routineService.showRoutine();
+            }
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
-                message: RESPONSE_MESSAGES.MEETING_UPDATED || "Meeting updated successfully",
+                message: RESPONSE_MESSAGES.ROUTINE_GET,
                 success: true,
-                data: updatedMeeting,
+                data: routine,
             });
         } catch (error) {
+            console.log(error);
+
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
+                error: error,
             });
         }
     }
 
-    async deleteMeeting(req, res) {
+    async deleteRoutine(req, res) {
         try {
-            const id = req.params.meetingId;
-            const deletedMeeting = await meetingService.deleteMeeting(id);
-
+            const routine = await routineService.deleteRoutine(
+                req.params.routineId
+            );
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
-                message: RESPONSE_MESSAGES.MEETING_DELETED || "Meeting deleted successfully",
+                message: RESPONSE_MESSAGES.ROUTINE_DELETE,
                 success: true,
-                data: deletedMeeting,
+                data: routine,
             });
         } catch (error) {
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
+                error: error,
             });
         }
     }
 }
 
-export default new MeetingController();
+export default new RoutineController();

@@ -6,8 +6,10 @@ import { validate } from "../middlewares/validate.middleware.js";
 const router = express.Router();
 
 router
-    .post("/",validate(meetingValidation.create),meetingController.createMeeting)
-    .get("/:email", meetingController.showMeeting)
+    .post("/",
+        // validate(meetingValidation.create),
+        meetingController.createMeeting)
+    .get("/:userid", meetingController.showMeeting)
     .patch("/:meetingId",validate(meetingValidation.update),meetingController.updateMeeting)
     .delete("/:meetingId",validate(meetingValidation.delete),meetingController.deleteMeeting);
 

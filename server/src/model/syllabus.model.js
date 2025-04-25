@@ -29,7 +29,7 @@ const syllabusSchema = new Schema({
         required: true,
     },
     semester: {
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: "semester",
         required: true,
     },

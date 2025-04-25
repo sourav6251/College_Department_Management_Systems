@@ -10,6 +10,7 @@ import { meetingRouter } from "./src/routes/meeting.routes.js"
 import { noticeboardRouter } from "./src/routes/noticeboard.routes.js"
 import { cloudinaryConfig } from "./src/config/cloudinary.config.js"
 import { userRouter } from "./src/routes/user.routes.js"
+import { routineRouter } from "./src/routes/routin.routes.js"
 
 
 
@@ -30,6 +31,7 @@ server.use('/api/v1/semester', semesterRouter)
 server.use('/api/v1/user', userRouter)
 server.use('/api/v1/meeting', meetingRouter)
 server.use('/api/v1/noticeboard', noticeboardRouter)
+server.use('/api/v1/routines', routineRouter)
 
 server.get("/", (req, res) => {
     res.send("application is run ").json({

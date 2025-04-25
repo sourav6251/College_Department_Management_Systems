@@ -21,7 +21,7 @@ const meetingSchema = new Schema({
     },
     mettingTime: {
         type: Date,
-        required: [true, 'metting time is required !'],
+        // required: [true, 'metting time is required !'],
     },
     joinusList: [{
         type: String,
@@ -33,7 +33,7 @@ const meetingSchema = new Schema({
     }],
     mettingArea: {
         type: String,
-        required: [true, 'metting area is required !'],
+        // required: [true, 'metting area is required !'],
         trim: true,
     }
 

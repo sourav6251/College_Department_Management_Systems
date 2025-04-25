@@ -1,7 +1,263 @@
-import React from "react";
+// import React, { useState, useEffect } from "react";
+// import SyllabusContent from "../components/syllabus/SyllabusContent";
+// import { motion } from "framer-motion";
+// import {
+//     Select,
+//     SelectContent,
+//     SelectItem,
+//     SelectTrigger,
+//     SelectValue,
+// } from "../components/ui/select";
+// import { Input } from "../components/ui/input";
+// import { Label } from "../components/ui/label";
+// import { Button } from "../components/ui/button";
+// import {
+//     Dialog,
+//     DialogContent,
+//     DialogDescription,
+//     DialogHeader,
+//     DialogTitle,
+//     DialogTrigger,
+// } from "../components/ui/dialog";
+// // import { useAuthStore } from "../store/authStore";
+// import { toast } from "sonner";
+// import axiosInstance from "../api/axiosInstance";
+// import ApiFunction from "../service/ApiFunction";
+// import { useAuthStore } from "../store/authStore";
+
+// // Framer Motion Variants
+// const containerVariants = {
+//     hidden: {},
+//     show: {
+//         transition: {
+//             staggerChildren: 0.1,
+//         },
+//     },
+// };
+
+// const itemVariants = {
+//     hidden: { opacity: 0, y: 20 },
+//     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+// };
+
+// const Syllabus = () => {
+
+//     const departmentid =useAuthStore((state)=>state.departmentid)
+//     const role =useAuthStore((state)=>state.role)
+//     const userId =useAuthStore((state)=>state.user._id)
+
+//     const [formData, setFormData] = useState({
+//         semester: "",
+//         paperCode: "",
+//         file: null,
+//     });
+//     const [loading, setLoading] = useState(false);
+//     const [syllabus, setSyllabus] = useState([]);
+
+//     const handleInputChange = (name, value) => {
+//         setFormData((prev) => ({ ...prev, [name]: value }));
+//     };
+
+//     const handleFileChange = (e) => {
+//         const file = e.target.files[0];
+//         if (file && file.size > 5 * 1024 * 1024) {
+//             toast.error("File size must be less than 5MB");
+//             return;
+//         }
+//         if (
+//             file &&
+//             !["application/pdf", "image/jpeg", "image/png", "image/gif"].includes(file.type)
+//         ) {
+//             toast.error("Only PDF, JPEG, PNG, or GIF files are allowed");
+//             return;
+//         }
+//         setFormData((prev) => ({ ...prev, file }));
+//     };
+// const fetchSyllabus = async () => {
+//         console.log("departmentid",departmentid);
+//         let response;
+//         try {
+//             response = await axiosInstance.get(`/syllabus/${departmentid}`
+//         );
+//         console.log("response=>",response.data.data);
+        
+//             setSyllabus(response.data.data || []);
+//             console.log("syllabus2=>",syllabus);
+            
+//         } catch (error) {
+//             toast.error(error.response?.data?.message || "Failed to fetch syllabus");
+//         }
+//     };
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         setLoading(true);
+
+//         // Client-side validation
+//         if (!userId || !departmentid) {
+//             toast.error("User or department information missing");
+//             setLoading(false);
+//             return;
+//         }
+//         if (!formData.semester) {
+//             toast.error("Semester is required");
+//             setLoading(false);
+//             return;
+//         }
+//         if (!formData.paperCode || formData.paperCode.length < 3 || formData.paperCode.length > 10) {
+//             toast.error("Paper code must be 3-10 characters");
+//             setLoading(false);
+//             return;
+//         }
+//         if (!formData.file) {
+//             toast.error("Syllabus file is required");
+//             setLoading(false);
+//             return;
+//         }
+
+//         try {
+//             const cloudinaryResponse = await ApiFunction.uploadCoudinary(formData.file);
+//             const syllabusData = {
+//                 user: userId,
+//                 department: departmentid,
+//                 semester: formData.semester,
+//                 paperCode: formData.paperCode,
+//                 media: [
+//                     {
+//                         mediaUrl: cloudinaryResponse.secure_url,
+//                         mediaID: cloudinaryResponse.public_id,
+//                     },
+//                 ],
+//             };
+
+//             const response = await axiosInstance.post("/syllabus", syllabusData);
+//             toast.success(response.data.message || "Syllabus created successfully");
+
+//             setFormData({ semester: "", paperCode: "", file: null });
+//             e.target.querySelector('input[type="file"]').value = "";
+//             fetchSyllabus();
+//         } catch (error) {
+//             console.error("Syllabus creation failed:", error);
+//             toast.error(error.response?.data?.message || "Failed to create syllabus");
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     useEffect(() => {
+//         if (departmentid) {
+//             fetchSyllabus();
+//         }
+        
+//     }, [departmentid]);
+
+//     return (
+//         <div className="p-6">
+//             <motion.div
+//                 className="flex items-center justify-between pb-4"
+//                 initial={{ opacity: 0, y: -20 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ duration: 0.3 }}
+//             >
+//                 <h1 className="text-3xl font-bold">Syllabus</h1>
+//                 {(role === "admin" || role === "hod") && (
+//                     <Dialog>
+//                         <DialogTrigger>
+//                             <Button variant="outline">+ Add Syllabus</Button>
+//                         </DialogTrigger>
+//                         <DialogContent>
+//                             <DialogHeader>
+//                                 <DialogTitle>Add New Syllabus</DialogTitle>
+//                                 <DialogDescription>
+//                                     <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit}>
+//                                         <div className="w-full flex gap-4">
+//                                             <div className="w-1/2">
+//                                                 <Label htmlFor="semester">Semester</Label>
+//                                                 <Select
+//                                                     onValueChange={(value) =>
+//                                                         handleInputChange("semester", value)
+//                                                     }
+//                                                     value={formData.semester}
+//                                                 >
+//                                                     <SelectTrigger className="w-full">
+//                                                         <SelectValue placeholder="Select Semester" />
+//                                                     </SelectTrigger>
+//                                                     <SelectContent>
+//                                                         {[...Array(8)].map((_, i) => (
+//                                                             <SelectItem key={i} value={`${i + 1}`}>
+//                                                                 {`${i + 1}st Semester`
+//                                                                     .replace("1st", `${i + 1}th`)
+//                                                                     .replace("11th", "11th")
+//                                                                     .replace("12th", "12th")
+//                                                                     .replace("13th", "13th")}
+//                                                             </SelectItem>
+//                                                         ))}
+//                                                     </SelectContent>
+//                                                 </Select>
+//                                             </div>
+//                                             <div className="w-1/2">
+//                                                 <Label htmlFor="paperCode">Paper Code</Label>
+//                                                 <Input
+//                                                     id="paperCode"
+//                                                     name="paperCode"
+//                                                     type="text"
+//                                                     value={formData.paperCode}
+//                                                     onChange={(e) =>
+//                                                         handleInputChange("paperCode", e.target.value)
+//                                                     }
+//                                                     required
+//                                                 />
+//                                             </div>
+//                                         </div>
+//                                         <div>
+//                                             <Label htmlFor="doc">Upload Syllabus (PDF, JPEG, PNG, GIF)</Label>
+//                                             <Input
+//                                                 id="doc"
+//                                                 type="file"
+//                                                 accept=".pdf,.jpg,.jpeg,.png,.gif"
+//                                                 onChange={handleFileChange}
+//                                                 className="h-[5rem] w-full rounded-md cursor-pointer"
+//                                             />
+//                                         </div>
+//                                         <Button
+//                                             type="submit"
+//                                             variant="default"
+//                                             className="w-full bg-slate-900"
+//                                             disabled={loading}
+//                                         >
+//                                             {loading ? "Creating..." : "Create"}
+//                                         </Button>
+//                                     </form>
+//                                 </DialogDescription>
+//                             </DialogHeader>
+//                         </DialogContent>
+//                     </Dialog>
+//                 )}
+//             </motion.div>
+
+//             <motion.div
+//                 variants={containerVariants}
+//                 initial="hidden"
+//                 animate="show"
+//             >
+//                 {syllabus.length === 0 ? (
+//                     <p>No syllabus found</p>
+//                 ) : (
+//                     syllabus.map((syllabus) => (
+//                         <motion.div variants={itemVariants} key={syllabus._id}>
+//                             <SyllabusContent syllabus={syllabus} refreshsyllabus={fetchSyllabus} />
+//                         </motion.div>
+//                     ))
+//                 )}
+//             </motion.div>
+//         </div>
+//     );
+// };
+
+// export default Syllabus;
+import React, { useState, useEffect } from "react";
 import SyllabusContent from "../components/syllabus/SyllabusContent";
 import { motion } from "framer-motion";
-
 import {
     Select,
     SelectContent,
@@ -10,7 +266,6 @@ import {
     SelectValue,
 } from "../components/ui/select";
 import { Input } from "../components/ui/input";
-// import { Helmet } from 'react-helmet';
 import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import {
@@ -21,6 +276,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../components/ui/dialog";
+import { toast } from "sonner";
+import axiosInstance from "../api/axiosInstance";
+import ApiFunction from "../service/ApiFunction";
 import { useAuthStore } from "../store/authStore";
 
 // Framer Motion Variants
@@ -39,214 +297,210 @@ const itemVariants = {
 };
 
 const Syllabus = () => {
+    const departmentid = useAuthStore((state) => state.departmentid);
+    const role = useAuthStore((state) => state.role);
+    const userId = useAuthStore((state) => state.user._id);
 
-    const role:String | null=useAuthStore((state)=>state.role)
+    const [formData, setFormData] = useState({
+        semester: "",
+        paperCode: "",
+        file: null,
+    });
+    const [loading, setLoading] = useState(false);
+    const [syllabus, setSyllabus] = useState([]);
+
+    const handleInputChange = (name, value) => {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file && file.size > 5 * 1024 * 1024) {
+            toast.error("File size must be less than 5MB");
+            return;
+        }
+        if (
+            file &&
+            !["application/pdf", "image/jpeg", "image/png", "image/gif"].includes(file.type)
+        ) {
+            toast.error("Only PDF, JPEG, PNG, or GIF files are allowed");
+            return;
+        }
+        setFormData((prev) => ({ ...prev, file }));
+    };
+
+    const fetchSyllabus = async () => {
+        console.log("departmentid", departmentid);
+        let response;
+        try {
+            response = await axiosInstance.get(`/syllabus/${departmentid}`);
+            console.log("response=>", response.data.data);
+            setSyllabus(response.data.data || []);
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to fetch syllabus");
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        // Client-side validation
+        if (!userId || !departmentid) {
+            toast.error("User or department information missing");
+            setLoading(false);
+            return;
+        }
+        if (!formData.semester) {
+            toast.error("Semester is required");
+            setLoading(false);
+            return;
+        }
+        if (!formData.paperCode || formData.paperCode.length < 3 || formData.paperCode.length > 10) {
+            toast.error("Paper code must be 3-10 characters");
+            setLoading(false);
+            return;
+        }
+        if (!formData.file) {
+            toast.error("Syllabus file is required");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const cloudinaryResponse = await ApiFunction.uploadCoudinary(formData.file);
+            const syllabusData = {
+                user: userId,
+                department: departmentid,
+                semester: formData.semester,
+                paperCode: formData.paperCode,
+                media: [
+                    {
+                        mediaUrl: cloudinaryResponse.secure_url,
+                        mediaID: cloudinaryResponse.public_id,
+                    },
+                ],
+            };
+
+            const response = await axiosInstance.post("/syllabus", syllabusData);
+            toast.success(response.data.message || "Syllabus created successfully");
+
+            setFormData({ semester: "", paperCode: "", file: null });
+            e.target.querySelector('input[type="file"]').value = "";
+            fetchSyllabus();
+        } catch (error) {
+            console.error("Syllabus creation failed:", error);
+            toast.error(error.response?.data?.message || "Failed to create syllabus");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (departmentid) {
+            fetchSyllabus();
+        }
+    }, [departmentid]);
+
     return (
-        <>
-            {/* <Helmet>
-                <title>Syllabus | PBC Online</title>
-            </Helmet> */}
-
-            {/* Header with button */}
+        <div className="p-6">
             <motion.div
-                className="flex items-center justify-between px-8 py-4"
+                className="flex items-center justify-between pb-4"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
             >
                 <h1 className="text-3xl font-bold">Syllabus</h1>
-                {(role==='admin' ||role==='hod') && 
-                <Dialog>
-                    <DialogTrigger>
-                        <Button variant="outline">+ Add Syllabus</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>ADD new Syllabus</DialogTitle>
-                            <DialogDescription>
-                                <form className="mt-6 flex flex-col gap-5 py-3">
-                                    <div className="w-full flex gap-4">
-                                        <div className="w-1/2">
-                                            <Label htmlFor="role">Semester</Label>
-                                            <Select>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Semester" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {[...Array(8)].map((_, i) => (
-                                                        <SelectItem key={i} value={`${i + 1}`}>
-                                                            {`${i + 1}st Semester`.replace("1st", `${i + 1}th`).replace("11th", "11th").replace("12th", "12th").replace("13th", "13th")}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                {(role === "admin" || role === "hod") && (
+                    <Dialog>
+                        <DialogTrigger>
+                            <Button variant="outline">+ Add Syllabus</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Add New Syllabus</DialogTitle>
+                                <DialogDescription>
+                                    <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit}>
+                                        <div className="w-full flex gap-4">
+                                            <div className="w-1/2">
+                                                <Label htmlFor="semester">Semester</Label>
+                                                <Select
+                                                    onValueChange={(value) =>
+                                                        handleInputChange("semester", value)
+                                                    }
+                                                    value={formData.semester}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select Semester" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {[...Array(8)].map((_, i) => (
+                                                            <SelectItem key={i} value={`${i + 1}`}>
+                                                                {`${i + 1}st Semester`
+                                                                    .replace("1st", `${i + 1}th`)
+                                                                    .replace("11th", "11th")
+                                                                    .replace("12th", "12th")
+                                                                    .replace("13th", "13th")}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="w-1/2">
+                                                <Label htmlFor="paperCode">Paper Code</Label>
+                                                <Input
+                                                    id="paperCode"
+                                                    name="paperCode"
+                                                    type="text"
+                                                    value={formData.paperCode}
+                                                    onChange={(e) =>
+                                                        handleInputChange("paperCode", e.target.value)
+                                                    }
+                                                    required
+                                                />
+                                            </div>
                                         </div>
                                         <div>
-                                            <Label>Paper Code</Label>
-                                            <Input id="doc" type="text" />
+                                            <Label htmlFor="doc">Upload Syllabus (PDF, JPEG, PNG, GIF)</Label>
+                                            <Input
+                                                id="doc"
+                                                type="file"
+                                                accept=".pdf,.jpg,.jpeg,.png,.gif"
+                                                onChange={handleFileChange}
+                                                className="h-[5rem] w-full rounded-md cursor-pointer"
+                                            />
                                         </div>
-                                    </div>
-                                    <div className="w-full">
-                                        <Label htmlFor="title">Paper Name</Label>
-                                        <Input id="title" type="text" />
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="doc">Upload Syllabus</Label>
-                                        <Input
-                                            placeholder="Upload Syllabus"
-                                            id="doc"
-                                            type="file"
-                                            className="h-[5rem] w-full rounded-md cursor-pointer"
-                                        />
-                                    </div>
-                                    <Button variant="default" className="w-full bg-slate-900">
-                                        Create
-                                    </Button>
-                                </form>
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>}
-
+                                        <Button
+                                            type="submit"
+                                            variant="default"
+                                            className="w-full bg-slate-900"
+                                            disabled={loading}
+                                        >
+                                            {loading ? "Creating..." : "Create"}
+                                        </Button>
+                                    </form>
+                                </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </motion.div>
 
-            {/* Animate Syllabus Content */}
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
             >
-                <motion.div variants={itemVariants}>
-                    <SyllabusContent />
-                </motion.div>
+                {syllabus.length === 0 ? (
+                    <p>No syllabus found</p>
+                ) : (
+                    <motion.div variants={itemVariants}>
+                        <SyllabusContent syllabi={syllabus} refreshSyllabi={fetchSyllabus} />
+                    </motion.div>
+                )}
             </motion.div>
-        </>
+        </div>
     );
 };
 
 export default Syllabus;
-
-
-
-// import React, { useState } from "react";
-// import SyllabusContent from "../components/syllabus/SyllabusContent";
-// import { motion } from "framer-motion";
-// import {
-//     Select,
-//     SelectContent,
-//     SelectItem,
-//     SelectTrigger,
-//     SelectValue,
-// } from "../components/ui/select";
-// import { Button } from "../components/ui/button";
-// import {
-//     Dialog,
-//     DialogContent,
-//     DialogDescription,
-//     DialogHeader,
-//     DialogTitle,
-//     DialogTrigger,
-// } from "../components/ui/dialog";
-// import { Input } from "../components/ui/input";
-// import { Label } from "../components/ui/label";
-
-// const Syllabus = () => {
-//     const [selectedSemester, setSelectedSemester] = useState("1");
-//     const [syllabusData, setSyllabusData] = useState<{ [key: string]: any[] }>({
-//         1: [],
-//         2: [],
-//         3: [],
-//         4: [],
-//         5: [],
-//         6: [],
-//         7: [],
-//         8: [],
-//     });
-
-//     const handleAddSyllabus = (newSyllabus: any) => {
-//         setSyllabusData((prev) => ({
-//             ...prev,
-//             [selectedSemester]: [...prev[selectedSemester], newSyllabus],
-//         }));
-//     };
-
-//     return (
-//         <>
-//             <motion.div
-//                 className="flex items-center justify-between px-8 py-4"
-//                 initial={{ opacity: 0, y: -20 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ duration: 0.3 }}
-//             >
-//                 <h1 className="text-3xl font-bold">Syllabus</h1>
-
-//                 <Dialog>
-//                     <DialogTrigger>
-//                         <Button variant="outline">+ Add Syllabus</Button>
-//                     </DialogTrigger>
-//                     <DialogContent>
-//                         <DialogHeader>
-//                             <DialogTitle>ADD New Syllabus</DialogTitle>
-//                             <DialogDescription>
-//                                 <AddSyllabusForm onSubmit={handleAddSyllabus} semester={selectedSemester} />
-//                             </DialogDescription>
-//                         </DialogHeader>
-//                     </DialogContent>
-//                 </Dialog>
-//             </motion.div>
-
-//             <div className="px-8 pb-4">
-//                 <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-//                     <SelectTrigger className="w-48">
-//                         <SelectValue placeholder="Select Semester" />
-//                     </SelectTrigger>
-//                     <SelectContent>
-//                         {[...Array(8)].map((_, i) => (
-//                             <SelectItem key={i} value={`${i + 1}`}>
-//                                 Semester {i + 1}
-//                             </SelectItem>
-//                         ))}
-//                     </SelectContent>
-//                 </Select>
-//             </div>
-
-//             <motion.div initial="hidden" animate="show">
-//                 <SyllabusContent
-//                     syllabusList={syllabusData[selectedSemester]}
-//                     setSyllabusList={(updatedList: any[]) =>
-//                         setSyllabusData((prev) => ({
-//                             ...prev,
-//                             [selectedSemester]: updatedList,
-//                         }))
-//                     }
-//                 />
-//             </motion.div>
-//         </>
-//     );
-// };
-
-// const AddSyllabusForm = ({ onSubmit, semester }: any) => {
-//     const [code, setCode] = useState("");
-//     const [name, setName] = useState("");
-
-//     const handleSubmit = (e: any) => {
-//         e.preventDefault();
-//         onSubmit({ semester, papercode: code, papername: name });
-//         setCode("");
-//         setName("");
-//     };
-
-//     return (
-//         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-//             <Label>Paper Code</Label>
-//             <Input value={code} onChange={(e) => setCode(e.target.value)} required />
-//             <Label>Paper Name</Label>
-//             <Input value={name} onChange={(e) => setName(e.target.value)} required />
-//             <Button type="submit" className="bg-slate-900 w-full">
-//                 Add
-//             </Button>
-//         </form>
-//     );
-// };
-
-// export default Syllabus;

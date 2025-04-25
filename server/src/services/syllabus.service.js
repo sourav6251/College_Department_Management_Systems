@@ -2,7 +2,14 @@ import { Syllabus } from "../model/syllabus.model.js";
 
 class SyllabusService {
     async createSyllabus(data) {
-        const syllabus = await Syllabus.create(data);
+        let syllabus ;
+        console.log('Enter  into syllabus ',data);
+        try{syllabus= await Syllabus.create(data);}
+        catch(error){
+            console.log("error=>",error);
+            
+        }
+        console.log('Enter  into syllabus ',syllabus);
         return syllabus;
     }
 
@@ -13,14 +20,19 @@ class SyllabusService {
 
     // async showSyllabus({ department, semester, paperCode }) {
     async showSyllabus(data) {
+        console.log(`data.departmentid skd=>`,data);
         const department = data.department;
-        const semester = data.semester;
-        const paperCode = data.paperCode;
+        // const semester = data.semester;
+        // const paperCode = data.paperCode;
         const filter = { department };
-        if (semester) filter.semester = semester;
-        if (paperCode) filter.paperCode = paperCode;
-
-        const syllabus = await Syllabus.find(filter).select("media");
+        // if (semester) filter.semester = semester;
+        // if (paperCode) filter.paperCode = paperCode;
+let syllabus
+        try{ syllabus = await Syllabus.find({ department: data });}
+        catch(error){
+            console.log(error);
+            
+        }
         console.log(`syllabus skd=>${syllabus}`);
         
 

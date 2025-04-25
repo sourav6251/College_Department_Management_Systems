@@ -1,5 +1,5 @@
 import { model , Schema } from "mongoose"
-import { Departments } from "./department.model"
+import { type } from "os"
 
 const routineSchema = new Schema({
 
@@ -33,8 +33,9 @@ const routineSchema = new Schema({
         required : true ,
     },
     semester : {
-        type : Schema.Types.ObjectId,
-        ref : 'semester',
+        // type : Schema.Types.ObjectId,
+        type:String,
+        // ref : 'semester',
         required : true ,
     },
     schedules : [

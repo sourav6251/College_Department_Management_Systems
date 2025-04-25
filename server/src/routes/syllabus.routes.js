@@ -7,10 +7,16 @@ import { authorizeRoles, isAuthenticate } from "../middlewares/authentication.mi
 const router = express.Router();
 
 router
-    .post('/',validate(syllabusValidation.create), isAuthenticate , authorizeRoles("admin" , "hod") , syllabusController.createSyllabus)
-    .get('/', syllabusController.showSyllabus)
-    .patch('/:syllabusId',validate(syllabusValidation.update), isAuthenticate , authorizeRoles("admin" , "hod") , syllabusController.updateSyllabus)
-    .delete('/:syllabusId',validate(syllabusValidation.delete), isAuthenticate , authorizeRoles("admin" , "hod") , syllabusController.deleteSyllabus)
+    .post('/',
+        // validate(syllabusValidation.create), isAuthenticate , authorizeRoles("admin" , "hod") ,
+         syllabusController.createSyllabus)
+    .get('/:departmentid', syllabusController.showSyllabus)
+    .patch('/:syllabusId',
+        // validate(syllabusValidation.update), isAuthenticate , authorizeRoles("admin" , "hod") ,
+         syllabusController.updateSyllabus)
+    .delete('/:syllabusId'
+        // ,validate(syllabusValidation.delete), isAuthenticate , authorizeRoles("admin" , "hod") 
+        , syllabusController.deleteSyllabus)
 
 
 export const syllabusRouter = router;
