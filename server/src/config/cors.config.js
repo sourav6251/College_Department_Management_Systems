@@ -1,7 +1,7 @@
 import cors from "cors";
 
 const corsConfig = cors({
-    origin: ['https://college-department-management-systems-njq4.vercel.app' ],
+    origin: ['http://localhost:3000' ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
 });
