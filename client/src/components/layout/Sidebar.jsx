@@ -135,12 +135,16 @@ export function Sidebar() {
                         link={"/"}
                     />
                 )}
+
+                {role !== "external"   && (
                 <SidebarLink
                     icon={ClipboardList}
                     label="Notices"
                     isCollapsed={isCollapsed}
                     link={"/notice-board"}
                 />
+                )}
+
                 <SidebarLink
                     icon={LibraryBig}
                     label="Syllabus"
@@ -148,7 +152,6 @@ export function Sidebar() {
                     link={"/syllabus"}
                 />
                 {(role === "hod" ||
-                    role === "admin" ||
                     role === "external") && (
                     <SidebarLink
                         icon={BarChart3}
@@ -165,12 +168,15 @@ export function Sidebar() {
                         link={"/meetings"}
                     />
                 )}
+
+                {role !== "external"  && (
                 <SidebarLink
                     icon={Calendar}
                     label="Routines"
                     isCollapsed={isCollapsed}
                     link={"/routines"}
                 />
+                )}
                 {(role === "hod" || role === "admin") && (
                     <SidebarLink
                         icon={User}

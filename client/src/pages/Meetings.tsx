@@ -489,17 +489,25 @@ const Meetings = () => {
     }));
 
     return (
-        <>
-            <div className="h-[2.7rem] pr-8 flex justify-end items-end">
-                {role === "hod" && (
+          <div className="container flex flex-col gap-4">
+            <motion.div
+                className="flex flex-row items-center justify-between pb-2"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+            >
+                <div>
+                    <h1 className="text-2xl font-semibold">Meetings</h1>
+                    <p>Manage and view department meetings</p>
+                </div>
+                {(role === "admin" || role === "hod") && (
                     <Dialog>
-                        <DialogTrigger>
+                        <DialogTrigger >
                             <Button
-                                variant="outline"
-                                className="flex flex-row items-center justify-center"
-                                onClick={fetchUsers}
+                                variant="default"
+                                className="flex flex-row items-center justify-center gap-2"
                             >
-                                <CalendarPlus className="text-[5px] p-[2px]" />
+                                <CalendarPlus className="w-4 h-4" />
                                 <span>Organize meeting</span>
                             </Button>
                         </DialogTrigger>
@@ -598,7 +606,7 @@ const Meetings = () => {
                         </DialogContent>
                     </Dialog>
                 )}
-            </div>
+            </motion.div>
             {loading ? (
     <div className="text-center">Loading meetings...</div>
 ) : ownMeetings.length === 0 && invitedMeetings.length === 0 ? (
@@ -638,7 +646,7 @@ const Meetings = () => {
     </motion.div>
 )}
 
-        </>
+        </div>
     );
 };
 
