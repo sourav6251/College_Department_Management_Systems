@@ -81,11 +81,12 @@ export function Header() {
                             className="rounded-full border border-gray-500 overflow-hidden"
                             aria-label="User profile"
                         >
-                            {user?.profile_pic?.url ? (
+                             <img src="favicon.ico"  className="h-5 w-5 " />
+                            {/* {user?.profile_pic?.url ? (
                                 <img src={user?.profile_pic?.url} />
                             ) : (
                                 <User className="h-5 w-5" />
-                            )}
+                            )} */}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>

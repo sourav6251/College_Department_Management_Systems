@@ -53,7 +53,7 @@ router
         async (req, res) => {
             try {
                 const users = await Users.find({
-                    role: { $in: ["faculty"] },
+                    role: { $in: ["faculty","hod"] },
                 }).select("name email role");
                 
                 return res.status(200).json({

@@ -13,6 +13,9 @@ import { userRouter } from "./src/routes/user.routes.js"
 import { routineRouter } from "./src/routes/routin.routes.js"
 import mailConfiguration from "./src/config/mail.configuration.js"
 import { mailRouter } from "./src/routes/mail.route.js"
+// index.js or app.js
+import "./src/utils/sendRoutineMails.js"; // this will auto-start the job
+ //help to schedule routine notification
 
 
 

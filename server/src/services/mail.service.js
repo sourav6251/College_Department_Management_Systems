@@ -2,6 +2,8 @@ import mailConfiguration from "../config/mail.configuration.js";
 
 class MailService {
     sendMail = async (To) => {
+      console.log("Enter into Mail=> ",To);
+      
         await mailConfiguration.sendMail({
             from: process.env.EMAIL_ID,
             to:To,
