@@ -9,6 +9,9 @@ router
     .post("/",
         // validate(meetingValidation.create),
         meetingController.createMeeting)
+        // Add this line after existing routes
+    .get("/email/:email", meetingController.getMeetingsByEmail)
+
     .get("/:userid", meetingController.showMeeting)
     .patch("/:meetingId",validate(meetingValidation.update),meetingController.updateMeeting)
     .delete("/:meetingId",validate(meetingValidation.delete),meetingController.deleteMeeting);

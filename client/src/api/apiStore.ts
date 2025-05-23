@@ -47,9 +47,19 @@ class APIStore {
 
         return await axiosInstance.post("/meeting", data);
     }
-    async meetingGet() {}
-    async meetingEdit() {}
-    async meetingDelete() {}
+    async meetingGet(userId) {
+      return  await axiosInstance.get(`/meeting/${userId}`);
+    } 
+       async meetingGetByEmail(email) {
+        return await axiosInstance.get(`/meeting/email/${email}`)
+    //   return  await axiosInstance.get(`/meeting/${userId}`);
+    }
+    async meetingEdit(id,data) {
+        await axiosInstance.patch(`/meeting/${id}`, data);
+    }
+    async meetingDelete(id) {
+        return await axiosInstance.delete(`/meeting/${id}`);
+    }
 
     async noticeboardCreate(noticeData: FormData) {
         console.log("noticeData=>  ", noticeData);
@@ -85,6 +95,12 @@ class APIStore {
     }
     async certificateGet() {}
     async certificateEdit() {}
-    async certificateDelete() {}
+    async mail() {}
+    async meetingMail(To,subject,body) {
+        const bodys={
+            To:To, subject:subject,body:body
+        }
+        return await axiosInstance.post(`/mail`,bodys);
+    }
 }
 export default new APIStore();

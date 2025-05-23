@@ -19,6 +19,8 @@ export function Header() {
     const isDarkMode = theme === "dark";
 
     const { user } = useAuthStore();
+    console.log("useAuthStore=>",user);
+    
     console.log(",user?.department",user?.department);
      
     const handleToggleTheme = useCallback(() => {
@@ -91,6 +93,7 @@ export function Header() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>{user?.name}</DropdownMenuItem>
                         <DropdownMenuItem>{user?.department}</DropdownMenuItem>
+                        <DropdownMenuItem>{user?.email}</DropdownMenuItem>
                         <DropdownMenuItem className="capitalize">
                             {user?.role}
                         </DropdownMenuItem>

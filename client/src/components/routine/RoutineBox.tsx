@@ -21,6 +21,8 @@ const RoutineBox = ({ sem, refreshKey }) => {
             setError(null);
             try { 
                 const response = await axiosInstance.get(`/routines/department/${departmentid}`);
+                console.log("Routine response=>",response);
+                
                 setRoutines(response.data.data || []);
             } catch (err) {
                 setError(err.response?.data?.message || "Failed to fetch routines");

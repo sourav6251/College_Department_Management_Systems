@@ -151,6 +151,16 @@ class MeetingService {
             throw error;
         }
     }
+    async getMeetingsByEmail(email) {
+        try {
+            const meetings = await Mettings.find({ joinusList: email });
+            return meetings;
+        } catch (error) {
+            console.error("Error in getMeetingsByEmail:", error);
+            throw error;
+        }
+    }
+    
 }
 
 export default new MeetingService();

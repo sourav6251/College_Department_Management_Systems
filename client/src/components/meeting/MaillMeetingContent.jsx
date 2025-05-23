@@ -40,7 +40,7 @@ import { toast } from "sonner";
 import axiosInstance from "../../api/axiosInstance";
 import apiStore from "../../api/apiStore";
 
-const MeetingContent = ({
+const MaillMeetingContent = ({
     id,
     title,
     description,
@@ -48,7 +48,7 @@ const MeetingContent = ({
     participantsNo,
     participants,
     location,
-    onDelete,
+    // onDelete,
 }) => {
     console.log("date_time=> ", date_time);
 
@@ -183,102 +183,6 @@ const MeetingContent = ({
                         </CardTitle>
                     </div>
                     <div className="flex w-fit gap-3">
-                        <Dialog>
-                            <DialogTrigger className="justify-around items-center px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-700 transition flex gap-2">
-                                Delete
-                                <Trash2 className="p-1" />
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Delete Meeting</DialogTitle>
-                                    <DialogDescription>
-                                        Are you sure you want to delete this
-                                        meeting? This action cannot be undone.
-                                        <Button
-                                            onClick={handleDelete}
-                                            className="mt-4 bg-red-500 text-white"
-                                        >
-                                            Confirm Delete
-                                        </Button>
-                                    </DialogDescription>
-                                </DialogHeader>
-                            </DialogContent>
-                        </Dialog>
-
-                        <Dialog>
-                            <DialogTrigger className="justify-around items-center px-4 py-2 text-sm bg-[#28449ede] text-white rounded-md hover:bg-[#28439e] transition flex gap-2">
-                                Edit <FilePenLine className="p-1" />
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Edit Meeting</DialogTitle>
-                                    <DialogDescription>
-                                        <form
-                                            onSubmit={submitEdit}
-                                            className="space-y-6 p-6 bg-white max-w-xl mx-auto"
-                                        >
-                                            <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="title">
-                                                    Title
-                                                </Label>
-                                                <Input
-                                                    id="title"
-                                                    value={meetingData.title}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter meeting title"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="description">
-                                                    Description
-                                                </Label>
-                                                <Textarea
-                                                    id="description"
-                                                    value={
-                                                        meetingData.description
-                                                    }
-                                                    onChange={handleInputChange}
-                                                    placeholder="Meeting purpose, agenda..."
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="datetime">
-                                                    Date and Time
-                                                </Label>
-                                                <Input
-                                                    id="datetime"
-                                                    type="datetime-local"
-                                                    value={meetingData.datetime}
-                                                    onChange={handleInputChange}
-                                                    className="w-full"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="location">
-                                                    Location
-                                                </Label>
-                                                <Input
-                                                    id="location"
-                                                    value={meetingData.location}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter room/building"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <Button type="submit">Save</Button>
-                                        </form>
-                                    </DialogDescription>
-                                </DialogHeader>
-                            </DialogContent>
-                        </Dialog>
-                        <Button onClick={() => notify()}>Notify</Button>
 
                     </div>
                 </div>
@@ -325,4 +229,4 @@ const MeetingContent = ({
     );
 };
 
-export default MeetingContent;
+export default MaillMeetingContent;

@@ -300,6 +300,7 @@ import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../store/authStore";
 import Select from "react-select";
 import apiStore from "../api/apiStore";
+import MaillMeetingContent from "../components/meeting/MaillMeetingContent";
 
 // Animation variants for Framer Motion
 const itemVariants = {
@@ -328,19 +329,43 @@ const Meetings = () => {
         selectedUsers: [],
         manualEmails: "",
     });
-
+    const [ownMeetings, setOwnMeetings] = useState([]);
+    const [invitedMeetings, setInvitedMeetings] = useState([]);
+    
     const departmentid = useAuthStore((state) => state.departmentid);
     const role = useAuthStore((state) => state.role);
     const userId = useAuthStore((state) => state.user._id);
-    const userEmail = useAuthStore((state) => state.user.email);
+    const userEmail = useAuthStore((state) => state.userEmail);
+    console.log("Mee userEmail=>",userEmail);
+    
 
     // Fetch meetings
+    // const fetchMeetings = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await apiStore.meetingGet(userId)
+    //         const response2 = await apiStore.meetingGetByEmail(userEmail)
+    //         console.log("fetchMeetings response:", response.data);
+    //         console.log("fetchMeetings response2:", response2.data);
+    //         setMeetings(response.data.data || []);
+    //     } catch (error) {
+    //         console.error("fetchMeetings error:", error.response?.data || error.message);
+    //         toast.error("Failed to fetch meetings: " + (error.response?.data?.message || error.message));
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     const fetchMeetings = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`/meeting/${userId}`);
-            console.log("fetchMeetings response:", response.data);
-            setMeetings(response.data.data || []);
+            const response = await apiStore.meetingGet(userId);
+            const response2 = await apiStore.meetingGetByEmail(userEmail);
+    
+            console.log("fetchMeetings own:", response.data);
+            console.log("fetchMeetings invited:", response2.data);
+    
+            setOwnMeetings(response.data.data || []);
+            setInvitedMeetings(response2.data.data || []);
         } catch (error) {
             console.error("fetchMeetings error:", error.response?.data || error.message);
             toast.error("Failed to fetch meetings: " + (error.response?.data?.message || error.message));
@@ -348,12 +373,13 @@ const Meetings = () => {
             setLoading(false);
         }
     };
-
+    
     // Fetch users with roles hod, faculty, external
     const fetchUsers = async () => {
         try {
             console.log("Fetching users for role:", role);
             const response = await apiStore.userGetByRole();
+            
             console.log("userGetByRole response:", response.data);
             setUsers(response.data.data || []);
         } catch (error) {
@@ -574,38 +600,44 @@ const Meetings = () => {
                 )}
             </div>
             {loading ? (
-                <div className="text-center">Loading meetings...</div>
-            ) : meetings.length === 0 ? (
-                <div className="text-center">No meetings found.</div>
-            ) : (
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="show"
-                >
-                    {meetings.map((meeting) => (
-                        <motion.div key={meeting._id} variants={itemVariants}>
-                            <MeetingContent
-                                id={meeting._id}
-                                title={meeting.title}
-                                description={meeting.description}
-                                date_time={meeting.mettingTime }
-                                // date={new Date(meeting.meetingTime)
-                                //     .toLocaleDateString("en-GB")
-                                //     .split("/")
-                                //     .join("-")}
-                                // time={new Date(meeting.meetingTime).toLocaleTimeString([], {
-                                //     hour: "2-digit",
-                                //     minute: "2-digit",
-                                // })}
-                                participants={meeting.joinusList.length}
-                                location={meeting.mettingArea}
-                                onDelete={fetchMeetings}
-                            />
-                        </motion.div>
-                    ))}
-                </motion.div>
-            )}
+    <div className="text-center">Loading meetings...</div>
+) : ownMeetings.length === 0 && invitedMeetings.length === 0 ? (
+    <div className="text-center">No meetings found.</div>
+) : (
+    <motion.div variants={containerVariants} initial="hidden" animate="show">
+        {/* Meetings created by user */}
+        {ownMeetings.map((meeting) => (
+            <motion.div key={meeting._id} variants={itemVariants}>
+                <MeetingContent
+                    id={meeting._id}
+                    title={meeting.title}
+                    description={meeting.description}
+                    date_time={meeting.mettingTime}
+                    participantsNo={meeting.joinusList.length}
+                    participants={meeting.joinusList}
+                    location={meeting.mettingArea}
+                    onDelete={fetchMeetings}
+                />
+            </motion.div>
+        ))}
+
+        {/* Meetings where user is invited */}
+        {invitedMeetings.map((meeting) => (
+            <motion.div key={meeting._id} variants={itemVariants}>
+                <MaillMeetingContent
+                    id={meeting._id}
+                    title={meeting.title}
+                    description={meeting.description}
+                    date_time={meeting.mettingTime}
+                    participantsNo={meeting.joinusList.length}
+                    participants={meeting.joinusList}
+                    location={meeting.mettingArea}
+                />
+            </motion.div>
+        ))}
+    </motion.div>
+)}
+
         </>
     );
 };

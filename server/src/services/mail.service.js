@@ -11,6 +11,8 @@ class MailService {
     };
     
     meetingMail = async (Tos, subject,body) => {
+      console.log("meetingMail=> ");
+      
         await mailConfiguration.sendMail({
           from: process.env.EMAIL_ID,
           bcc: Tos,

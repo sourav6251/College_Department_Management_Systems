@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 interface AuthState {
     user: Record<string, any> | null;
+    userEmail:string |null,
     role: string | null;
     isAuthenticated: boolean;
     token: string | null;
@@ -21,6 +22,7 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             departmentid:null,
             department:null,
+            userEmail:null,
             login: (user, token) =>
                 set({
                     user,
@@ -28,7 +30,8 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: true,
                     token: token,
                     departmentid:user.departmentId,
-                    department:user.department
+                    department:user.department,
+                    userEmail:user.email
                 }),
             logout: () =>
                 set({
