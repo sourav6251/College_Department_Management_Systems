@@ -18,20 +18,20 @@ import React from "react";
 
 const CertificateGenerator = () => {
     const [formData, setFormData] = useState({
-        examinerName: " Mr. Biswajit Laya",
-        examinerDesignation: "SACT",
-        examinerDept: "Computer Science",
-        examinerCollege: "Kharagpur College",
-        examinerAddress: "West Medinipur, 721305, West Bengal",
-        year: "2025",
-        semester: "I",
-        degree: "UG",
-        subject: "Computer Science",
-        course: "COS-GE1P (OLD CBCS)",
-        dateOfExam: "01.04.2025",
-        timeOfExam: "10.00 a.m. to 5.00 p.m.",
-        numberOfStudents: "5 (Five)",
-        numberOfExaminers: "2 (Two)",
+        examinerName: " ",
+        examinerDesignation: "",
+        examinerDept: "",
+        examinerCollege: "",
+        examinerAddress: "",
+        year: "",
+        semester: "",
+        degree: "",
+        subject: "",
+        course: "",
+        dateOfExam: "",
+        timeOfExam: "",
+        numberOfStudents: "",
+        numberOfExaminers: "",
     });
     const role = useAuthStore((state) => state.role);
 

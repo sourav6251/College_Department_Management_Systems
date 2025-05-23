@@ -64,7 +64,7 @@ const Members = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
             >
-                <h1 className="text-3xl font-bold">Members</h1>
+                <h1 className="text-2xl font-semibold">Members</h1>
                 <div className="flex items-center gap-4">
                     <Select
                         value={display}

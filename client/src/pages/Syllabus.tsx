@@ -420,11 +420,11 @@ const Syllabus = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
             >
-                <h1 className="text-3xl font-bold">Syllabus</h1>
+                <h1 className="text-2xl font-semibold">Syllabus</h1>
                 {(role === "admin" || role === "hod") && (
                     <Dialog>
                         <DialogTrigger>
-                            <Button variant="outline">+ Add Syllabus</Button>
+                            <Button variant="default">+ Add Syllabus</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
