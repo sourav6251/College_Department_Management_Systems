@@ -7,6 +7,7 @@ interface AuthState {
     isAuthenticated: boolean;
     token: string | null;
     departmentid:String|null;
+    department:String|null;
     login: (user: Record<string, any>, token: string) => void;
     logout: () => void;
 }
@@ -19,14 +20,15 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             token: null,
             departmentid:null,
+            department:null,
             login: (user, token) =>
                 set({
                     user,
                     role: user.role,
                     isAuthenticated: true,
                     token: token,
-                    departmentid:user.departmentId 
-
+                    departmentid:user.departmentId,
+                    department:user.department
                 }),
             logout: () =>
                 set({

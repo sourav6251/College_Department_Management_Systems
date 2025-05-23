@@ -36,8 +36,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DatePickerDemo } from "@/components/layout/DatePicker";
-import axios from "axios";
 import { toast } from "sonner";
 import axiosInstance from "../../api/axiosInstance";
 
@@ -45,17 +43,39 @@ const MeetingContent = ({
     id,
     title,
     description,
-    date,
-    time,
+    date_time, // Expected: ISO string (e.g., "2025-05-23T03:10:00.000Z")
     participants,
     location,
     onDelete,
 }) => {
+    console.log("date_time=> ",date_time);
+    
+    // Parse date_time into date (dd-MM-yyyy) and time (HH:mm)
+    const parsedDateTime = new Date(date_time);
+    const date = parsedDateTime.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    }).split("/").join("-"); // e.g., "23-05-2025"
+    const time = parsedDateTime.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }); // e.g., "03:10"
+
+    // Initialize datetime for datetime-local input
+    const initialDatetime = () => {
+        try {
+            return parsedDateTime.toISOString().slice(0, 16); // e.g., "2025-05-23T03:10"
+        } catch {
+            return "";
+        }
+    };
+
     const [meetingData, setMeetingData] = useState({
         title,
         description,
-        date,
-        time,
+        datetime: initialDatetime(), // Combined date and time
         location,
     });
 
@@ -88,15 +108,17 @@ const MeetingContent = ({
         const data = {
             title: meetingData.title,
             description: meetingData.description,
-            meetingTime: `${meetingData.date}T${meetingData.time}:00Z`,
-            meetingArea: meetingData.location,
+            meetingTime: new Date(meetingData.datetime).toISOString(), // e.g., "2025-05-23T03:10:00.000Z"
+            mettingArea: meetingData.location, // Match backend schema
         };
 
         try {
+            console.log("Sending edit data:", data);
             await axiosInstance.patch(`/meeting/${id}`, data);
             toast.success("Meeting updated successfully!");
         } catch (error) {
-            toast.error("Failed to update meeting: " + error.message);
+            console.error("submitEdit error:", error.response?.data || error.message);
+            toast.error("Failed to update meeting: " + (error.response?.data?.message || error.message));
         }
     };
 
@@ -105,9 +127,10 @@ const MeetingContent = ({
         try {
             await axiosInstance.delete(`/meeting/${id}`);
             toast.success("Meeting deleted successfully!");
-            onDelete(); // Refresh meetings
+            onDelete();
         } catch (error) {
-            toast.error("Failed to delete meeting: " + error.message);
+            console.error("handleDelete error:", error.response?.data || error.message);
+            toast.error("Failed to delete meeting: " + (error.response?.data?.message || error.message));
         }
     };
 
@@ -139,8 +162,7 @@ const MeetingContent = ({
                                 <DialogHeader>
                                     <DialogTitle>Delete Meeting</DialogTitle>
                                     <DialogDescription>
-                                        Are you sure you want to delete this
-                                        meeting? This action cannot be undone.
+                                        Are you sure you want to delete this meeting? This action cannot be undone.
                                         <Button
                                             onClick={handleDelete}
                                             className="mt-4 bg-red-500 text-white"
@@ -161,79 +183,51 @@ const MeetingContent = ({
                                     <DialogTitle>Edit Meeting</DialogTitle>
                                     <DialogDescription>
                                         <form
-                                            //    rapidjson::Value::ConstMemberIterator itr = obj.FindMember("onSubmit");
                                             onSubmit={submitEdit}
                                             className="space-y-6 p-6 bg-white max-w-xl mx-auto"
                                         >
                                             <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="title">
-                                                    Title
-                                                </Label>
+                                                <Label htmlFor="title">Title</Label>
                                                 <Input
                                                     id="title"
                                                     value={meetingData.title}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter meeting title"
+                                                    required
                                                 />
                                             </div>
 
                                             <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="description">
-                                                    Description
-                                                </Label>
+                                                <Label htmlFor="description">Description</Label>
                                                 <Textarea
                                                     id="description"
-                                                    value={
-                                                        meetingData.description
-                                                    }
+                                                    value={meetingData.description}
                                                     onChange={handleInputChange}
                                                     placeholder="Meeting purpose, agenda..."
+                                                    required
                                                 />
                                             </div>
 
-                                            <div className="flex flex-col sm:flex-row gap-4">
-                                                <div className="flex flex-col gap-1.5 w-full">
-                                                    <Label htmlFor="date">
-                                                        Date
-                                                    </Label>
-                                                    <DatePickerDemo
-                                                        value={meetingData.date}
-                                                        onChange={(value) =>
-                                                            setMeetingData(
-                                                                (prev) => ({
-                                                                    ...prev,
-                                                                    date: value,
-                                                                })
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col gap-1.5 w-full">
-                                                    <Label htmlFor="time">
-                                                        Time
-                                                    </Label>
-                                                    <Input
-                                                        id="time"
-                                                        type="time"
-                                                        value={meetingData.time}
-                                                        onChange={
-                                                            handleInputChange
-                                                        }
-                                                        className="w-full"
-                                                    />
-                                                </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                <Label htmlFor="datetime">Date and Time</Label>
+                                                <Input
+                                                    id="datetime"
+                                                    type="datetime-local"
+                                                    value={meetingData.datetime}
+                                                    onChange={handleInputChange}
+                                                    className="w-full"
+                                                    required
+                                                />
                                             </div>
 
                                             <div className="flex flex-col gap-1.5">
-                                                <Label htmlFor="location">
-                                                    Location
-                                                </Label>
+                                                <Label htmlFor="location">Location</Label>
                                                 <Input
                                                     id="location"
                                                     value={meetingData.location}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter room/building"
+                                                    required
                                                 />
                                             </div>
 
@@ -253,12 +247,10 @@ const MeetingContent = ({
                                     <SheetTitle>Meeting Details</SheetTitle>
                                     <SheetDescription>
                                         <p>
-                                            <strong>Title:</strong>
-                                            {title}
+                                            <strong>Title:</strong> {title}
                                         </p>
                                         <p>
-                                            <strong>Description:</strong>{" "}
-                                            {description}
+                                            <strong>Description:</strong> {description}
                                         </p>
                                         <p>
                                             <strong>Date:</strong> {date}
@@ -267,14 +259,11 @@ const MeetingContent = ({
                                             <strong>Time:</strong> {time}
                                         </p>
                                         <p>
-                                            <strong>Location:</strong>{" "}
-                                            {location}
+                                            <strong>Location:</strong> {location}
                                         </p>
                                         <p>
-                                            <strong>Participants:</strong>{" "}
-                                            {participants}
+                                            <strong>Participants:</strong> {participants}
                                         </p>
-                                        {/* Add notification logic here */}
                                     </SheetDescription>
                                 </SheetHeader>
                             </SheetContent>

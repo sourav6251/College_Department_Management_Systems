@@ -14,3 +14,4 @@ router
     .delete("/:meetingId",validate(meetingValidation.delete),meetingController.deleteMeeting);
 
 export const meetingRouter = router;
+ 

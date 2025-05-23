@@ -1,6 +1,6 @@
 import { sendEmail } from "../utils/sendMail.js";
 import { genarate6DigitOtp } from "../utils/OtpGenarate.js";
-import { fileDestroy, fileUploader } from "../utils/fileUpload.js";
+// import { fileDestroy, fileUploader } from "../utils/fileUpload.js";
 import { timeExpire } from "../utils/timeExpire.js";
 import { Users } from "../model/user.model.js";
 
@@ -51,15 +51,15 @@ console.log("body=>",body);
                     semester: body.semester || null, // Optional semester
                 });
             } else if (body.role === "external") {
-                if (!body.semester || !body.paperCode || !body.paperName) {
-                    throw new Error("Semester, paperCode, and paperName are required for external users");
-                }
+                // if (!body.semester || !body.paperCode || !body.paperName) {
+                //     throw new Error("Semester, paperCode, and paperName are required for external users");
+                // }
                 await Externals.create({
                     user: user._id,
                     department: body.department,
-                    semester: body.semester,
-                    paperCode: body.paperCode,
-                    paperName: body.paperName,
+                    // semester: body.semester,
+                    // paperCode: body.paperCode,
+                    // paperName: body.paperName,
                 });
             }
         } catch (error) {
@@ -131,6 +131,7 @@ console.log("body=>",body);
 
     async loginUser(body, res) {
         const { email, role, password } = body;
+    console.log("body=>",body);
     
         // 1. Find user
         const user = await Users.findOne({ email, role }).select("+password");
@@ -140,26 +141,33 @@ console.log("body=>",body);
     
         // 2. Fetch departmentId based on role
         let departmentId = null;
+        let department = null;
     
         switch (role) {
             case "hod":
-                const hod = await Hods.findOne({ user: user._id }).populate("department", "_id");
+                const hod = await Hods.findOne({ user: user._id }).populate("department", "_id name");
                 departmentId = hod?.department?._id;
+                console.log("hod?.department=> ",hod?.department);
+                
+                department = hod?.department?.name;
                 break;
     
             case "faculty":
-                const faculty = await Facultys.findOne({ user: user._id }).populate("department", "_id");
+                const faculty = await Facultys.findOne({ user: user._id }).populate("department", "_id name");
                 departmentId = faculty?.department?._id;
+                department = faculty?.department?.name;
                 break;
     
             case "student":
-                const student = await Students.findOne({ user: user._id }).populate("department", "_id");
+                const student = await Students.findOne({ user: user._id }).populate("department", "_id name");
                 departmentId = student?.department?._id;
+                department = student?.department?.name;
                 break;
     
             case "external":
-                const external = await Externals.findOne({ user: user._id }).populate("department", "_id");
+                const external = await Externals.findOne({ user: user._id }).populate("department", "_id name");
                 departmentId = external?.department?._id;
+                department = external?.department?.name;
                 break;
     
             default:
@@ -167,6 +175,9 @@ console.log("body=>",body);
         }
     
         user._doc.departmentId = departmentId || null;
+        user._doc.department = department || null;
+        console.log("department=> ",department);
+        
         // 3. Send response
         sendCookie(user, res, "user login successfully", 200, );
     },
@@ -277,25 +288,25 @@ console.log("body=>",body);
     },
     
 
-    async changeProfilePic(id, file) {
-        const user = await Users.findById(id);
-        if (!user) {
-            throw new Error("User not found");
-        }
+    // async changeProfilePic(id, file) {
+    //     const user = await Users.findById(id);
+    //     if (!user) {
+    //         throw new Error("User not found");
+    //     }
 
-        if (user.profile_pic?.public_id) {
-            await fileDestroy(user.profile_pic.public_id);
-        }
+    //     if (user.profile_pic?.public_id) {
+    //         await fileDestroy(user.profile_pic.public_id);
+    //     }
 
-        const { url, public_id, error } = await fileUploader(file);
-        if (error) {
-            throw new Error("File upload failed");
-        }
+    //     const { url, public_id, error } = await fileUploader(file);
+    //     if (error) {
+    //         throw new Error("File upload failed");
+    //     }
 
-        user.profile_pic = { url, public_id };
-        await user.save();
-        return user;
-    },
+    //     user.profile_pic = { url, public_id };
+    //     await user.save();
+    //     return user;
+    // },
 
     async deleteUser(id) {
         return await Users.findByIdAndDelete(id);

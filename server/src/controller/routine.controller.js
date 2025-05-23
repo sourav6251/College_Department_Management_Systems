@@ -78,8 +78,38 @@ class RoutineController {
         }
     }
 
+    async showRoutineDepartment(req, res) {
+        try {
+            const routineId = req.params.userID;
+            let routine;
+            if (routineId) {
+                routine = await routineService.showRoutine(routineId);
+            } else {
+                routine = await routineService.showRoutine();
+            }
+
+            return sendResponse(res, {
+                status: HTTP_STATUS.OK,
+                message: RESPONSE_MESSAGES.ROUTINE_GET,
+                success: true,
+                data: routine,
+            });
+        } catch (error) {
+            console.log(error);
+
+            return sendResponse(res, {
+                status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                success: false,
+                error: error,
+            });
+        }
+    }
+
     async deleteRoutine(req, res) {
         try {
+            console.log("req.params.routineId=> ",req.params.routineId);
+            
             const routine = await routineService.deleteRoutine(
                 req.params.routineId
             );

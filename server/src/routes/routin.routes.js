@@ -12,6 +12,7 @@ router
         routineController.createRoutine
     )
     .get("/:userID", routineController.showRoutine)
+    .get("/department/:departmentID", routineController.showRoutineDepartment)
     .patch(
         "/:routineId",
         // validate(routineValidation.update),

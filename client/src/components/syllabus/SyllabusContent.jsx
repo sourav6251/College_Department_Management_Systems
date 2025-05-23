@@ -33,8 +33,9 @@ import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
 import axiosInstance from "../../api/axiosInstance";
 import ApiFunction from "../../service/ApiFunction";
+import apiStore from "../../api/apiStore";
 
-const SyllabusContent = ({ syllabi = [], refreshSyllabi }) => {
+const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
     console.log("syllabi=>", syllabi);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -68,9 +69,9 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabi }) => {
 
     const handleDelete = async (syllabusId) => {
         try {
-            await axiosInstance.delete(`/syllabus/${syllabusId}`);
+            await apiStore.syllabusDelete(syllabusId)
             toast.success("Syllabus deleted successfully");
-            refreshSyllabi();
+            refreshSyllabus();
         } catch (error) {
             console.error("Failed to delete syllabus:", error);
             toast.error(error.response?.data?.message || "Failed to delete syllabus");
@@ -102,27 +103,30 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabi }) => {
         setEditLoading(true);
 
         try {
-            const updateData = {
-                semester: editFormData.semester,
-                paperCode: editFormData.paperCode,
-                paperName: editFormData.paperName,
-            };
+            const updateData = new FormData();
+            updateData.append("semester", editFormData.semester);
+            updateData.append("paperCode", editFormData.paperCode);
+            updateData.append("paperName", editFormData.paperName);
+            updateData.append("media", editFormData.file);
+            
 
-            if (editFormData.file) {
-                const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
-                updateData.media = [
-                    {
-                        mediaUrl: cloudinaryResponse.secure_url,
-                        mediaID: cloudinaryResponse.public_id,
-                    },
-                ];
-            }
+            // if (editFormData.file) {
+            //     const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
+            //     updateData.media = [
+            //         {
+            //             mediaUrl: cloudinaryResponse.secure_url,
+            //             mediaID: cloudinaryResponse.public_id,
+            //         },
+            //     ];
+            // }
 
-            console.log("Updating syllabus:", updateData);
+            // console.log("Updating syllabus:", updateData);
 
-            const response = await axiosInstance.patch(`/syllabus/${syllabusId}`, updateData);
+            const response =await apiStore.syllabusEdit(syllabusId,updateData)
+
+            // const response = await axiosInstance.patch(`/syllabus/${syllabusId}`, updateData);
             toast.success(response.data.message || "Syllabus updated successfully");
-            refreshSyllabi();
+            refreshSyllabus();
         } catch (error) {
             console.error("Syllabus update failed:", error);
             toast.error(error.response?.data?.message || "Failed to update syllabus");

@@ -4,8 +4,12 @@ import { Users } from "../model/user.model.js";
 
 export const isAuthenticate = async (req, res, next) => {
   try {
-    let token = req?.cookies?.token ? req?.cookies?.token : req.headers?.authorization ;
-   console.log("token====>" , token );
+    // let token = req?.cookie?.token // | req?.cookies?.token | req.headers?.authorization ;
+    let token = req.cookies?.token || 
+    req.headers?.authorization?.replace('Bearer ', '') || 
+    req.headers?.cookie?.split('=')[1];
+  //  console.log("token====>" , token );
+  //  console.log("token2====>",req);
    
     if (!token) {
       console.log("User not authenticated");

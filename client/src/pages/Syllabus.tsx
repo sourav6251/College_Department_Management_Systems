@@ -255,6 +255,7 @@
 // };
 
 // export default Syllabus;
+
 import React, { useState, useEffect } from "react";
 import SyllabusContent from "../components/syllabus/SyllabusContent";
 import { motion } from "framer-motion";
@@ -280,6 +281,7 @@ import { toast } from "sonner";
 import axiosInstance from "../api/axiosInstance";
 import ApiFunction from "../service/ApiFunction";
 import { useAuthStore } from "../store/authStore";
+import apiStore from "../api/apiStore";
 
 // Framer Motion Variants
 const containerVariants = {
@@ -304,6 +306,7 @@ const Syllabus = () => {
     const [formData, setFormData] = useState({
         semester: "",
         paperCode: "",
+        paperName: "",
         file: null,
     });
     const [loading, setLoading] = useState(false);
@@ -330,10 +333,10 @@ const Syllabus = () => {
     };
 
     const fetchSyllabus = async () => {
-        console.log("departmentid", departmentid);
-        let response;
+        
         try {
-            response = await axiosInstance.get(`/syllabus/${departmentid}`);
+            // response = await axiosInstance.get(`/syllabus/${departmentid}`);
+           const response = await apiStore.syllabusGet(departmentid);
             console.log("response=>", response.data.data);
             setSyllabus(response.data.data || []);
         } catch (error) {
@@ -368,24 +371,31 @@ const Syllabus = () => {
         }
 
         try {
-            const cloudinaryResponse = await ApiFunction.uploadCoudinary(formData.file);
-            const syllabusData = {
-                user: userId,
-                department: departmentid,
-                semester: formData.semester,
-                paperCode: formData.paperCode,
-                media: [
-                    {
-                        mediaUrl: cloudinaryResponse.secure_url,
-                        mediaID: cloudinaryResponse.public_id,
-                    },
-                ],
-            };
+            // const cloudinaryResponse = await ApiFunction.uploadCoudinary(formData.file);
+            const syllabusData = new FormData();
+            syllabusData.append("user", userId);
+            syllabusData.append("department", departmentid);
+            syllabusData.append("semester",  formData.semester);
+            syllabusData.append("paperCode",  formData.paperCode);
+            syllabusData.append("paperName",  formData.paperName);
+            syllabusData.append("media",  formData.file);
+            // {
+            //     user: userId,
+            //     department: departmentid,
+            //     semester: formData.semester,
+            //     paperCode: formData.paperCode,
+            //     media: [
+            //         {
+            //             mediaUrl: cloudinaryResponse.secure_url,
+            //             mediaID: cloudinaryResponse.public_id,
+            //         },
+            //     ],
+            // };
 
-            const response = await axiosInstance.post("/syllabus", syllabusData);
+            const response = await apiStore.syllabusCreate(syllabusData)
             toast.success(response.data.message || "Syllabus created successfully");
 
-            setFormData({ semester: "", paperCode: "", file: null });
+            setFormData({ semester: "", paperCode: "",paperName:"", file: null });
             e.target.querySelector('input[type="file"]').value = "";
             fetchSyllabus();
         } catch (error) {
@@ -460,6 +470,19 @@ const Syllabus = () => {
                                                 />
                                             </div>
                                         </div>
+                                            <div className="w-full">
+                                                <Label htmlFor="paperName">Paper Name</Label>
+                                                <Input
+                                                    id="paperName"
+                                                    name="paperName"
+                                                    type="text"
+                                                    value={formData.paperName}
+                                                    onChange={(e) =>
+                                                        handleInputChange("paperName", e.target.value)
+                                                    }
+                                                    required
+                                                />
+                                            </div>
                                         <div>
                                             <Label htmlFor="doc">Upload Syllabus (PDF, JPEG, PNG, GIF)</Label>
                                             <Input
@@ -495,7 +518,7 @@ const Syllabus = () => {
                     <p>No syllabus found</p>
                 ) : (
                     <motion.div variants={itemVariants}>
-                        <SyllabusContent syllabi={syllabus} refreshSyllabi={fetchSyllabus} />
+                        <SyllabusContent syllabi={syllabus} refreshSyllabus={fetchSyllabus} />
                     </motion.div>
                 )}
             </motion.div>

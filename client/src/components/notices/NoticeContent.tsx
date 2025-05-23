@@ -32,6 +32,7 @@ import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
 import axiosInstance from "../../api/axiosInstance";
 import ApiFunction from "../../service/ApiFunction";
+import apiStore from "../../api/apiStore";
 
 const NoticeContent = ({ notice, refreshNotices }) => {
     const role = useAuthStore((state) => state.role);
@@ -87,24 +88,30 @@ const NoticeContent = ({ notice, refreshNotices }) => {
 
         setEditLoading(true);
         try {
-            let media = notice.media || [];
-            if (editFormData.file) {
-                const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
-                media = [
-                    {
-                        url: cloudinaryResponse.secure_url,
-                        public_id: cloudinaryResponse.public_id,
-                    },
-                ];
-            }
+            // let media = notice.media || [];
+            // if (editFormData.file) {
+            //     const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
+            //     media = [
+            //         {
+            //             url: cloudinaryResponse.secure_url,
+            //             public_id: cloudinaryResponse.public_id,
+            //         },
+            //     ];
+            // }
 
-            const updateData = {
-                title: editFormData.title,
-                description: editFormData.description,
-                media,
-            };
+            const updateData =new FormData();
+            
+            updateData.append("title", editFormData.title);
+            updateData.append("description", editFormData.description);
+            updateData.append("media", editFormData.file);
+            //  {
+            //     title: editFormData.title,
+            //     description: editFormData.description,
+            //     media,
+            // };
 
-            const response = await axiosInstance.patch(`/noticeboard/${notice._id}`, updateData);
+            const response = await apiStore.noticeboardEdit(notice._id,updateData)
+            // const response = await axiosInstance.patch(`/noticeboard/${notice._id}`, updateData);
             toast.success(response.data.message || "Notice updated successfully");
 
             setIsEditDialogOpen(false);
@@ -120,7 +127,8 @@ const NoticeContent = ({ notice, refreshNotices }) => {
 
     const handleDelete = async () => {
         try {
-            await axiosInstance.delete(`/noticeboard/${notice._id}`);
+            await apiStore.noticeboardDelete(notice._id)
+            // await axiosInstance.delete(`/noticeboard/${notice._id}`);
             toast.success("Notice deleted successfully");
             if (refreshNotices) refreshNotices();
         } catch (error) {

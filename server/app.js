@@ -8,7 +8,7 @@ import { departmentRouter } from "./src/routes/department.routes.js"
 import { semesterRouter } from "./src/routes/semester.routes.js"
 import { meetingRouter } from "./src/routes/meeting.routes.js"
 import { noticeboardRouter } from "./src/routes/noticeboard.routes.js"
-import { cloudinaryConfig } from "./src/config/cloudinary.config.js"
+// import { cloudinaryConfig } from "./src/config/cloudinary.config.js"
 import { userRouter } from "./src/routes/user.routes.js"
 import { routineRouter } from "./src/routes/routin.routes.js"
 
@@ -17,7 +17,7 @@ import { routineRouter } from "./src/routes/routin.routes.js"
 const server = express()
 
 server.use(corsConfig)
-cloudinaryConfig()
+// cloudinaryConfig()
 server.use(bodyParser.json({ limit: "50mb" }))
 server.use(express.json({ limit: "50mb" }))
 server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }))
