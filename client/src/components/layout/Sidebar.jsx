@@ -126,7 +126,7 @@ export function Sidebar() {
             <Separator className="bg-sidebar-border" />
 
             <div className="flex-1 overflow-auto p-3 flex flex-col gap-1">
-                {(role === "admin" || role === "hod") && (
+                { role === "hod" && (
                     <SidebarLink
                         icon={Home}
                         label="Dashboard"
