@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -14,6 +13,7 @@ import {
     MapPin,
     Trash2,
     FilePenLine,
+    Mail,
 } from "lucide-react";
 import { parse, isToday, isFuture } from "date-fns";
 import {
@@ -24,42 +24,54 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DatePickerDemo } from "@/components/layout/DatePicker";
-import axios from "axios";
 import { toast } from "sonner";
-import axiosInstance from "../../api/axiosInstance";
+import apiStore from "../../api/apiStore";
 
 const MeetingContent = ({
     id,
     title,
     description,
-    date,
-    time,
+    date_time, 
+    participantsNo,
     participants,
     location,
     onDelete,
 }) => {
+    console.log("date_time=> ", date_time);
+
+    const parsedDateTime = new Date(date_time);
+    const date = parsedDateTime
+        .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        })
+        .split("/")
+        .join("-"); 
+    const time = parsedDateTime.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }); 
+    const initialDatetime = () => {
+        try {
+            return parsedDateTime.toISOString().slice(0, 16); 
+        } catch {
+            return "";
+        }
+    };
+
     const [meetingData, setMeetingData] = useState({
         title,
         description,
-        date,
-        time,
+        datetime: initialDatetime(),
         location,
     });
-
-    // Parse date for status calculation
     const parseDate = (dateStr) => parse(dateStr, "dd-MM-yyyy", new Date());
 
     let status;
@@ -76,38 +88,61 @@ const MeetingContent = ({
         background = "bg-[#838586]";
     }
 
-    // Handle form input changes
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setMeetingData((prev) => ({ ...prev, [id]: value }));
     };
-
-    // Handle edit form submission
     const submitEdit = async (e) => {
         e.preventDefault();
         const data = {
             title: meetingData.title,
             description: meetingData.description,
-            meetingTime: `${meetingData.date}T${meetingData.time}:00Z`,
-            meetingArea: meetingData.location,
+            meetingTime: new Date(meetingData.datetime).toISOString(), 
+            mettingArea: meetingData.location, 
         };
 
         try {
-            await axiosInstance.patch(`/meeting/${id}`, data);
+            console.log("Sending edit data:", data);
+            await apiStore.meetingEdit(id,data)
             toast.success("Meeting updated successfully!");
         } catch (error) {
-            toast.error("Failed to update meeting: " + error.message);
+            console.error(
+                "submitEdit error:",
+                error.response?.data || error.message
+            );
+            toast.error(
+                "Failed to update meeting: " +
+                    (error.response?.data?.message || error.message)
+            );
+        }
+    };
+    const notify = async () => {
+        let subject = `Reminder: ${title} scheduled on ${date} at ${time}`;
+        console.log("participants=> ", participants);
+        try {
+            await apiStore.meetingMail(participants, title, subject);
+            toast.success("mail send Successfully")
+        } catch (error) {
+            toast.error("Something Wrong")
+            console.error(error)
+
         }
     };
 
-    // Handle delete
     const handleDelete = async () => {
         try {
-            await axiosInstance.delete(`/meeting/${id}`);
+            await apiStore.meetingDelete(id)
             toast.success("Meeting deleted successfully!");
-            onDelete(); // Refresh meetings
+            onDelete();
         } catch (error) {
-            toast.error("Failed to delete meeting: " + error.message);
+            console.error(
+                "handleDelete error:",
+                error.response?.data || error.message
+            );
+            toast.error(
+                "Failed to delete meeting: " +
+                    (error.response?.data?.message || error.message)
+            );
         }
     };
 
@@ -161,7 +196,6 @@ const MeetingContent = ({
                                     <DialogTitle>Edit Meeting</DialogTitle>
                                     <DialogDescription>
                                         <form
-                                            //    rapidjson::Value::ConstMemberIterator itr = obj.FindMember("onSubmit");
                                             onSubmit={submitEdit}
                                             className="space-y-6 p-6 bg-white max-w-xl mx-auto"
                                         >
@@ -174,6 +208,7 @@ const MeetingContent = ({
                                                     value={meetingData.title}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter meeting title"
+                                                    required
                                                 />
                                             </div>
 
@@ -188,41 +223,22 @@ const MeetingContent = ({
                                                     }
                                                     onChange={handleInputChange}
                                                     placeholder="Meeting purpose, agenda..."
+                                                    required
                                                 />
                                             </div>
 
-                                            <div className="flex flex-col sm:flex-row gap-4">
-                                                <div className="flex flex-col gap-1.5 w-full">
-                                                    <Label htmlFor="date">
-                                                        Date
-                                                    </Label>
-                                                    <DatePickerDemo
-                                                        value={meetingData.date}
-                                                        onChange={(value) =>
-                                                            setMeetingData(
-                                                                (prev) => ({
-                                                                    ...prev,
-                                                                    date: value,
-                                                                })
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div className="flex flex-col gap-1.5 w-full">
-                                                    <Label htmlFor="time">
-                                                        Time
-                                                    </Label>
-                                                    <Input
-                                                        id="time"
-                                                        type="time"
-                                                        value={meetingData.time}
-                                                        onChange={
-                                                            handleInputChange
-                                                        }
-                                                        className="w-full"
-                                                    />
-                                                </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                <Label htmlFor="datetime">
+                                                    Date and Time
+                                                </Label>
+                                                <Input
+                                                    id="datetime"
+                                                    type="datetime-local"
+                                                    value={meetingData.datetime}
+                                                    onChange={handleInputChange}
+                                                    className="w-full"
+                                                    required
+                                                />
                                             </div>
 
                                             <div className="flex flex-col gap-1.5">
@@ -234,6 +250,7 @@ const MeetingContent = ({
                                                     value={meetingData.location}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter room/building"
+                                                    required
                                                 />
                                             </div>
 
@@ -243,42 +260,8 @@ const MeetingContent = ({
                                 </DialogHeader>
                             </DialogContent>
                         </Dialog>
+                        <Button onClick={() => notify()}>Notify <Mail/></Button>
 
-                        <Sheet>
-                            <SheetTrigger className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-                                View Details /Notify
-                            </SheetTrigger>
-                            <SheetContent>
-                                <SheetHeader>
-                                    <SheetTitle>Meeting Details</SheetTitle>
-                                    <SheetDescription>
-                                        <p>
-                                            <strong>Title:</strong>
-                                            {title}
-                                        </p>
-                                        <p>
-                                            <strong>Description:</strong>{" "}
-                                            {description}
-                                        </p>
-                                        <p>
-                                            <strong>Date:</strong> {date}
-                                        </p>
-                                        <p>
-                                            <strong>Time:</strong> {time}
-                                        </p>
-                                        <p>
-                                            <strong>Location:</strong>{" "}
-                                            {location}
-                                        </p>
-                                        <p>
-                                            <strong>Participants:</strong>{" "}
-                                            {participants}
-                                        </p>
-                                        {/* Add notification logic here */}
-                                    </SheetDescription>
-                                </SheetHeader>
-                            </SheetContent>
-                        </Sheet>
                     </div>
                 </div>
             </CardHeader>
@@ -307,8 +290,8 @@ const MeetingContent = ({
                 <div className="flex flex-col items-center gap-[3px]">
                     <Users className="w-4 h-4" />
                     <div className="flex gap-2 items-center">
-                        <p className="text-[13px]">Participants</p>
-                        <p className="text-[13px]">{participants}</p>
+                        <p className="text-[13px]">participantsNo</p>
+                        <p className="text-[13px]">{participantsNo}</p>
                     </div>
                 </div>
 

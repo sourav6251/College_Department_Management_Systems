@@ -14,14 +14,12 @@ const meetingSchema = new Schema({
     },
     description: {
         type: String,
-        // required: [true, 'description is required !'],
         maxLength: [1000, 'description should be in 1000 letter'],
         minLength: [3, 'description must be in 3 letter '],
         trim: true,
     },
     mettingTime: {
         type: Date,
-        // required: [true, 'metting time is required !'],
     },
     joinusList: [{
         type: String,
@@ -33,7 +31,6 @@ const meetingSchema = new Schema({
     }],
     mettingArea: {
         type: String,
-        // required: [true, 'metting area is required !'],
         trim: true,
     }
 

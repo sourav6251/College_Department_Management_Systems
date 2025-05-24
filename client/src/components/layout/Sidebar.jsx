@@ -110,7 +110,7 @@ export function Sidebar() {
                     }`}
                 >
                     <div className="flex gap-1 items-end justify-center">
-                        Online{" "}
+                        CDMS{" "}
                         <div className="h-2 w-2 mb-1 bg-green-500 rounded-full"></div>
                     </div>
                 </motion.div>
@@ -126,7 +126,7 @@ export function Sidebar() {
             <Separator className="bg-sidebar-border" />
 
             <div className="flex-1 overflow-auto p-3 flex flex-col gap-1">
-                {(role === "admin" || role === "hod") && (
+                { role === "hod" && (
                     <SidebarLink
                         icon={Home}
                         label="Dashboard"
@@ -135,12 +135,16 @@ export function Sidebar() {
                         link={"/"}
                     />
                 )}
+
+                {role !== "external"   && (
                 <SidebarLink
                     icon={ClipboardList}
                     label="Notices"
                     isCollapsed={isCollapsed}
                     link={"/notice-board"}
                 />
+                )}
+
                 <SidebarLink
                     icon={LibraryBig}
                     label="Syllabus"
@@ -148,7 +152,6 @@ export function Sidebar() {
                     link={"/syllabus"}
                 />
                 {(role === "hod" ||
-                    role === "admin" ||
                     role === "external") && (
                     <SidebarLink
                         icon={BarChart3}
@@ -165,12 +168,15 @@ export function Sidebar() {
                         link={"/meetings"}
                     />
                 )}
+
+                {role !== "external"  && (
                 <SidebarLink
                     icon={Calendar}
                     label="Routines"
                     isCollapsed={isCollapsed}
                     link={"/routines"}
                 />
+                )}
                 {(role === "hod" || role === "admin") && (
                     <SidebarLink
                         icon={User}

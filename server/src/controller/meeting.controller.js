@@ -89,6 +89,36 @@ class MeetingController {
             });
         }
     }
+    async getMeetingsByEmail(req, res) {
+        try {
+            const email = req.params.email;
+    
+            if (!email) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    message: "Email is required",
+                    success: false,
+                });
+            }
+    
+            const meetings = await meetingService.getMeetingsByEmail(email);
+    
+            return sendResponse(res, {
+                status: HTTP_STATUS.OK,
+                message: "Meetings fetched successfully by email",
+                success: true,
+                data: meetings,
+            });
+        } catch (error) {
+            return sendResponse(res, {
+                status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                success: false,
+                error,
+            });
+        }
+    }
+    
 }
 
 export default new MeetingController();

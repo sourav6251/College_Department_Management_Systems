@@ -18,12 +18,9 @@ const noticeboardSchema =new Schema({
         {
             url : {
                 type : String ,
-                default : 'https://img.freepik.com/premium-vector/user-circle-with-blue-gradient-circle_78370-4727.jpg?w=826'
-            },
+           },
             public_id : {
                 type : String ,
-                // enum : ['image' , 'pdf'],
-                required : true
             }
         }
     ],

@@ -16,31 +16,52 @@ import {
     SelectContent,
     SelectItem,
 } from "../ui/select";
-import { Users, ChevronDown, ChevronUp } from "lucide-react";
+import { Users, ChevronDown, ChevronUp, Trash2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "../ui/button";
+import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../api/axiosInstance";
+import { toast } from "sonner";
 
 interface Member {
+    _id: string;
     name: string;
     department: string;
     phone?: string;
     email?: string;
+    role: string;
 }
 
 interface MemberListProps {
     data: Member[];
+    onDelete?: () => void; // Add onDelete callback prop
 }
 
-const MemberList: React.FC<MemberListProps> = ({ data = [] }) => {
+const MemberList: React.FC<MemberListProps> = ({ data = [], onDelete }) => {
     const [search, setSearch] = useState("");
     const [sortKey, setSortKey] = useState<"name" | "department">("name");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const [filterDepartment, setFilterDepartment] = useState("all");
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const role = useAuthStore((state) => state.role);
 
-    // ✅ Type-safe department values
     const departments: string[] = useMemo(() => {
         const allDepts = data.map((m) => m?.department).filter(Boolean);
         return ["all", ...Array.from(new Set(allDepts))];
     }, [data]);
+
+    const handleDelete = async (id: string) => {
+        try {
+            setDeletingId(id);
+            await axiosInstance.delete(`/user/${id}`);
+            toast.success("Member deleted successfully");
+            onDelete?.(); // Call the refresh callback if provided
+        } catch (error) {
+            toast.error("Failed to delete member");
+        } finally {
+            setDeletingId(null);
+        }
+    };
 
     const filtered = data
         .filter((member) => {
@@ -83,7 +104,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [] }) => {
 
     return (
         <div className="w-full space-y-4 p-0">
-            {/* Filter & Search Row */}
             <div className="flex flex-col md:flex-row justify-end items-start md:items-center gap-2 w-full">
                 <Input
                     type="text"
@@ -109,7 +129,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [] }) => {
                 </Select>
             </div>
 
-            {/* Table */}
             <div className="overflow-x-auto rounded-md border dark:border-slate-800">
                 <Table>
                     <TableHeader>
@@ -136,16 +155,16 @@ const MemberList: React.FC<MemberListProps> = ({ data = [] }) => {
                                     />
                                 </div>
                             </TableHead>
-                            <TableHead className="text-center">Phone</TableHead>
                             <TableHead className="text-center">Email</TableHead>
+                            {role === "hod" && <TableHead className="text-center">Actions</TableHead>}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <AnimatePresence>
                             {filtered.length > 0 ? (
-                                filtered.map((member, index) => (
+                                filtered.map((member) => (
                                     <motion.tr
-                                        key={index}
+                                        key={member._id}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0 }}
@@ -164,16 +183,30 @@ const MemberList: React.FC<MemberListProps> = ({ data = [] }) => {
                                             {member?.name || "—"}
                                         </TableCell>
                                         <TableCell className="text-center">
-                                            {member?.phone || "—"}
-                                        </TableCell>
-                                        <TableCell className="text-center">
                                             {member?.email || "—"}
                                         </TableCell>
+                                        {role === "hod" && (
+                                            <TableCell className="text-center">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => handleDelete(member._id)}
+                                                    disabled={deletingId === member._id}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    {deletingId === member._id ? (
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                    ) : (
+                                                        <Trash2 className="h-4 w-4" />
+                                                    )}
+                                                </Button>
+                                            </TableCell>
+                                        )}
                                     </motion.tr>
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4}>
+                                    <TableCell colSpan={role === "hod" ? 5 : 4}>
                                         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                                             <Users className="h-10 w-10 mb-2" />
                                             <p className="text-sm italic">

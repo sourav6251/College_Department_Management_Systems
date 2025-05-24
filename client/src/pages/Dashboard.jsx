@@ -6,8 +6,8 @@ import React from "react";
 export default function Dashboard() {
     const { role } = useAuthStore();
 
-    // If role is not 'admin' AND not 'hod', redirect to /notices
-    if (role !== "admin" && role !== "hod") {
+    // If role is not 'faculty' AND not 'hod', redirect to /notices
+    if (role !== "faculty" && role !== "hod") {
         return <Navigate to="/notice-board" replace />;
     }
 

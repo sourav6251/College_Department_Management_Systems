@@ -5,11 +5,28 @@ import { sendResponse } from "../utils/response.handler.js";
 
 class NoticeboardController {
     async createNotice(req, res) {
+        console.log("req.body => ", req.body);
+        console.log("req.file => ", req.file);
 
-        console.log("Enter into create notice ");
-        
         try {
-            const noticeData = req.body;
+            const { user, department, title, description } = req.body;
+            const media = req.file;
+
+            if (!user || !department || !title || !description) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    message: "Missing required fields",
+                    success: false,
+                });
+            }
+
+            const noticeData = {
+                user,
+                department,
+                title,
+                description,
+                media,
+            };
 
             const notice = await noticeboardService.createNotice(noticeData);
 
@@ -20,11 +37,11 @@ class NoticeboardController {
                 data: notice,
             });
         } catch (error) {
+            console.error("Create notice error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                message: error.message || RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
             });
         }
     }
@@ -55,9 +72,54 @@ class NoticeboardController {
     }
 
     async updateNotice(req, res) {
+        console.log("req.body => ", req.body);
+        console.log("req.file => ", req.file);
+
         try {
             const id = req.params.noticeId;
-            const updatedNotice = await noticeboardService.updateNotice(id, req.body);
+            const { title, description } = req.body;
+            const media = req.file;
+
+            // Validate required fields
+            if (!title || !description) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    message: "Title and description are required",
+                    success: false,
+                });
+            }
+
+            // Validate title and description length
+            if (title.length < 3 || title.length > 60) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    message: "Title must be 3-60 characters",
+                    success: false,
+                });
+            }
+            if (description.length < 3 || description.length > 500) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.BAD_REQUEST,
+                    message: "Description must be 3-500 characters",
+                    success: false,
+                });
+            }
+
+            const updateData = {
+                title,
+                description,
+                media,
+            };
+
+            const updatedNotice = await noticeboardService.updateNotice(id, updateData);
+
+            if (!updatedNotice) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.NOT_FOUND,
+                    message: "Notice not found",
+                    success: false,
+                });
+            }
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
@@ -66,11 +128,11 @@ class NoticeboardController {
                 data: updatedNotice,
             });
         } catch (error) {
+            console.error("Update notice error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                message: error.message || RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error,
             });
         }
     }
@@ -79,6 +141,14 @@ class NoticeboardController {
         try {
             const id = req.params.noticeId;
             const deletedNotice = await noticeboardService.deleteNotice(id);
+
+            if (!deletedNotice) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.NOT_FOUND,
+                    message: "Notice not found",
+                    success: false,
+                });
+            }
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,

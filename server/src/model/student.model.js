@@ -17,7 +17,6 @@ const studentSchema = new Schema({
     semester : {
         type :  Schema.Types.ObjectId,
         ref : 'semester',
-        // required : true,
     }
 },{timestamps : true})
 

@@ -33,9 +33,7 @@ const routineSchema = new Schema({
         required : true ,
     },
     semester : {
-        // type : Schema.Types.ObjectId,
         type:String,
-        // ref : 'semester',
         required : true ,
     },
     schedules : [
@@ -57,6 +55,9 @@ const routineSchema = new Schema({
                     trim : true
     
                     } ,
+                    paperName:{
+                        type : String ,
+                    },
                     professor : {
                     type : Schema.Types.ObjectId,
                     ref : 'user',
