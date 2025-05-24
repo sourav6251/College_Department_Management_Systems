@@ -110,7 +110,7 @@ export function Sidebar() {
                     }`}
                 >
                     <div className="flex gap-1 items-end justify-center">
-                        Online{" "}
+                        CDMS{" "}
                         <div className="h-2 w-2 mb-1 bg-green-500 rounded-full"></div>
                     </div>
                 </motion.div>
