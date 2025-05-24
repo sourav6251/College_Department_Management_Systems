@@ -54,8 +54,11 @@ export function DashboardContext() {
                     const todayName = new Date().toLocaleDateString('en-US', { 
                         weekday: 'long' 
                     }).toLowerCase();
+                    console.log("todayName=>",todayName);
                     
                     const routine = result.data[0];
+                    console.log("routine=>",routine.schedules);
+                    
                     const todaySchedule = routine.schedules.find(
                         schedule => schedule.dayName === todayName
                     );
@@ -63,6 +66,7 @@ export function DashboardContext() {
                     console.log("Today's Schedule:", todaySchedule);
     
                     if (todaySchedule) {
+
                         const formattedSlots = todaySchedule.timeSlots.map(slot => ({
                             startTime: new Date(slot.startTime).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
@@ -89,7 +93,7 @@ export function DashboardContext() {
         };
     
         if (user?._id) fetchTodayRoutine();
-    }, [user?._id]);
+    }, []);
 
 
 

@@ -44,7 +44,7 @@ const Members = () => {
             setLoading(true);
             const response =await  apiStore.memberGetByRole(display)
             setData(response.data.data);
-            console.log(response);
+            console.log("response=>",response);
         } catch (error) {
             toast.error("Failed to fetch members");
         } finally {

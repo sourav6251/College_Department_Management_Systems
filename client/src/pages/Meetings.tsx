@@ -107,6 +107,7 @@ const Meetings = () => {
 
     useEffect(() => {
         if (userEmail) {
+            fetchUsers();
             fetchMeetings();
         }
     }, [userEmail]);
