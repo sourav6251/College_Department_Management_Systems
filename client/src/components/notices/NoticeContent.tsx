@@ -168,7 +168,7 @@ const NoticeContent = ({ notice, refreshNotices }) => {
                             <SheetTitle>{notice.title}</SheetTitle>
                             <SheetDescription>
                                 <p>{notice.description}</p>
-                                {notice.media!=null && notice.media.length > 0 && (
+                                {notice.media[0].url  !=null && notice.media.length > 0 && (
                                     <div className="mt-4">
                                         <p>Media:</p>
                                         {notice.media[0].url.match(/\.(jpeg|jpg|png|gif)$/i) ? (

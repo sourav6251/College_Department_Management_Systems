@@ -1,9 +1,4 @@
-
 import { v2 as cloudinary } from "cloudinary";
-
-
-
-
 class FileUploader {
     constructor() {
         cloudinary.config({
@@ -14,7 +9,6 @@ class FileUploader {
           timeout: 60000
         });
     
-        // Verify configuration
         console.log("Cloudinary initialized in constructor:", {
           cloud_name: cloudinary.config().cloud_name,
           api_key: cloudinary.config().api_key 

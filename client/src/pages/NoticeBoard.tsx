@@ -37,6 +37,7 @@ const NoticeBoard = () => {
     const role = useAuthStore((state) => state.role);
     const userId = useAuthStore((state) => state.user._id);
     console.log("departmentID", departmentID);
+    const [userEmail,setUserEmail]=useState<string[]>([]);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -101,13 +102,20 @@ const NoticeBoard = () => {
             setLoading(false);
         }
     };
-    // const featchUser=(async()=>{
-    //     try {
-    //         const resultawait
-    //     } catch (error) {
+    const featchUser=(async()=>{
+        try {
+            console.log("featchUser");
             
-    //     }
-    // })
+            const result=await apiStore.getDepartmentUsers(departmentID);
+            console.log("getDepartmentUsers=>",result.data.data.all);
+            setUserEmail(result.data.data.all)
+            console.log("setUserEmail=> ",userEmail);
+            
+            
+        } catch (error) {
+            
+        }
+    })
 
     useEffect(() => {
         if (departmentID) {
@@ -130,7 +138,7 @@ const NoticeBoard = () => {
                             <Button
                                 variant="default"
                                 className="flex flex-row items-center justify-center"
-                                // onClick={featchUser}
+                                onClick={featchUser}
                             >
                                 <Plus />
                                 <span>Create Notice</span>

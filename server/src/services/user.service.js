@@ -255,62 +255,41 @@ console.log("body=>",body);
         return await Users.findByIdAndUpdate(id, updateData, { new: true });
     },
 
-    async getUsersByDepartment(departmentId) {
+    async getDepartmentUserEmails(departmentId) {
         if (!mongoose.Types.ObjectId.isValid(departmentId)) {
             throw new Error("Invalid department ID");
         }
+    console.log("Enter");
     
-        const hods = await Hods.find({ department: departmentId })
-            .populate({
-                path: 'user',
-                select: 'email name role'
-            });
+        const [hods, faculties, students, externals] = await Promise.all([
+            Hods.find({ department: departmentId }).populate('user', 'email'),
+            Facultys.find({ department: departmentId }).populate('user', 'email'),
+            Students.find({ department: departmentId }).populate('user', 'email'),
+            Externals.find({ department: departmentId }).populate('user', 'email')
+        ]);
+    // console.log("[hods, faculties, students, externals]=> ",[hods, faculties, students, externals]);
+   const email={
+        
+            ...hods.map(h => h.user.email),
+            ...faculties.map(f => f.user.email),
+            ...students.map(s => s.user.email),
+            ...externals.map(e => e.user.email)
+    }
+    console.log(email);
     
-        const faculties = await Facultys.find({ department: departmentId })
-            .populate({
-                path: 'user',
-                select: 'email name role'
-            });
-    
-        const students = await Students.find({ department: departmentId })
-            .populate({
-                path: 'user',
-                select: 'email name role'
-            });
-    
-        const externals = await Externals.find({ department: departmentId })
-            .populate({
-                path: 'user',
-                select: 'email name role'
-            });
-    
-        const result = {
-            hods: hods.map(hod => ({
-                _id: hod.user._id,
-                email: hod.user.email,
-                name: hod.user.name,
-                role: hod.user.role
-            })),
-            faculties: faculties.map(faculty => ({
-                _id: faculty.user._id,
-                email: faculty.user.email,
-                name: faculty.user.name,
-                role: faculty.user.role
-            })),
-            students: students.map(student => ({
-                _id: student.user._id,
-                email: student.user.email,
-                name: student.user.name,
-                role: student.user.role
-            })),
-            externals: externals.map(external => ({
-                _id: external.user._id,
-                email: external.user.email,
-                name: external.user.name,
-                role: external.user.role
-            }))
-        };
-    
-        return result;
+        return email//{
+            // hods: hods.map(h => h.user.email),
+            // faculties: faculties.map(f => f.user.email),
+            // students: students.map(s => s.user.email),
+            // externals: externals.map(e => e.user.email),
+            // all:
+            //  [
+                // ...hods.map(h => h.user.email),
+                // ...faculties.map(f => f.user.email),
+                // ...students.map(s => s.user.email),
+                // ...externals.map(e => e.user.email)
+            // ]
+        //}
+        ;
     }
 };

@@ -1,9 +1,14 @@
 import { Noticeboard } from "../model/noticeboard.model.js";
 import FileUploader from "../utils/FileUploader.js";
+import mailService from "./mail.service.js";
+import { UserService } from "./user.service.js";
 
 class NoticeboardService {
     async createNotice(data) {
         const { user, department, title, description, media } = data;
+        const email=await UserService.getDepartmentUserEmails(department)
+        console.log("NoticeboardService=>  ",email);
+        const body=`${title}\n\n${description}\n\n${media}`
 
         console.log("Creating notice with data:", {
             user,
@@ -40,7 +45,9 @@ class NoticeboardService {
                 media: mediaInfo ? [mediaInfo] : [],
             });
 
-            console.log("Notice created successfully:", notice);
+            console.log("Notice created successfully:", email);
+            const emails = Object.values(email);
+        await mailService.noticeboard(emails,"Notice",body)
             return notice;
         } catch (error) {
             console.error("Error in createNotice:", error);

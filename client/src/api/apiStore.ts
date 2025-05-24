@@ -18,14 +18,6 @@ class APIStore {
     async syllabusDelete(syllabusId) {
         return await axiosInstance.delete(`/syllabus/${syllabusId}`);
     }
-    async departmentCreate() {}
-    async departmentGet() {}
-    async departmentEdit() {}
-    async departmentDelete() {}
-    async semesterCreate() {}
-    async semesterGet() {}
-    async semesterEdit() {}
-    async semesterDelete() {}
     async userlogin(user: LoginData) {
         return await axiosInstance.post("/user/login", user);
     }
@@ -84,23 +76,12 @@ class APIStore {
         return await axiosInstance.delete(`/noticeboard/${noticeID}`);
     }
 
-    async routinesCreate() {}
-    async routinesGet() {}
-    async routinesEdit() {}
     async routinesDelete(routineId) {
         return await axiosInstance.delete(`/routines/${routineId}`);
     }
 
-    async certificateCreate() {
-        // await axiosInstance.post()
-    }
     async certificateGet() {}
     async certificateEdit() {}
-    // async certificateMail(To,subject,body) {
-    //     const bodys={
-    //     To:To, subject:subject,body:body
-    // }
-    // return await axiosInstance.post(`/mail/certificate`,bodys);}
     async meetingMail(To,subject,body) {
         const bodys={
             To:To, subject:subject,body:body

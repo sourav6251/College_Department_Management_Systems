@@ -11,6 +11,7 @@ class MailService {
             text: text,
         });
     };
+
     
     meetingMail = async (Tos, subject,body) => {
       console.log("meetingMail=> ");
@@ -23,7 +24,35 @@ class MailService {
         });
       };
 
-
+      noticeboard = async (emails, subject, text) => {
+        try {
+          if (!Array.isArray(emails)) {
+            emails = [emails]; // Handle single email case
+          }
+      
+          // Send emails sequentially
+          for (const email of emails) {
+            try {
+              console.log(`Sending notice to: ${email}`);
+              await mailConfiguration.sendMail({
+                from: process.env.EMAIL_ID,
+                to: email,
+                subject: subject,
+                text: text,
+              });
+              console.log(`Notice sent successfully to: ${email}`);
+            } catch (error) {
+              console.error(`Failed to send notice to ${email}:`, error);
+              // Continue with next email even if one fails
+            }
+          }
+          
+          return { success: true, count: emails.length };
+        } catch (error) {
+          console.error("Error in noticeboard mail service:", error);
+          return { success: false, message: error.message };
+        }
+      };
     //   certificateMail = async (To, subject,htmlContent) => {
     //     try {
           

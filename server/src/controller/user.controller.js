@@ -171,7 +171,7 @@ export const getAllUser = async (req, res) => {
 export const getUsersByDepartment=async(req,res)=>{
 
     try {
-        const user=await  UserService.getUsersByDepartment(req.params.departmentID)
+        const user=await  UserService.getDepartmentUserEmails(req.params.departmentID)
         sendResponse(res, {
             status: HTTP_STATUS.OK,
             success: true,
