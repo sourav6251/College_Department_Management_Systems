@@ -15,6 +15,7 @@ import {
 import { Mail } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import React from "react";
+import apiStore from "../../api/apiStore";
 
 const CertificateGenerator = () => {
     const [formData, setFormData] = useState({
@@ -81,23 +82,25 @@ const CertificateGenerator = () => {
         }
     };
 
-    const handleSendEmail = async () => {
-        if (!email) return;
+    // const handleSendEmail = async () => {
+    //     if (!email) return;
 
-        setIsSending(true);
-        try {
-            // In a real app, you would call your backend API here
-            // This is just a simulation
-            console.log("Sending certificate to:", email);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            alert("Certificate sent successfully!");
-        } catch (error) {
-            console.error("Error sending email:", error);
-            alert("Failed to send certificate. Please try again.");
-        } finally {
-            setIsSending(false);
-        }
-    };
+    //     setIsSending(true);
+    //     try {
+    //         const htmlContent = certificateRef.current.innerHTML;
+    //         await apiStore.certificateMail(email,"Certificate",htmlContent)
+    //         // In a real app, you would call your backend API here
+    //         // This is just a simulation
+    //         console.log("Sending certificate to:", email);
+    //         // await new Promise((resolve) => setTimeout(resolve, 2000));
+    //         alert("Certificate sent successfully!");
+    //     } catch (error) {
+    //         console.error("Error sending email:", error);
+    //         alert("Failed to send certificate. Please try again.");
+    //     } finally {
+    //         setIsSending(false);
+    //     }
+    // };
 
     return (
         <>
@@ -361,11 +364,11 @@ const CertificateGenerator = () => {
                             <Card className="mt-6">
                                 <CardHeader>
                                     <CardTitle className="text-xl">
-                                        Send Certificate
+                                         Certificate
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="space-y-2">
+                                    {/* <div className="space-y-2">
                                         <Label>Recipient Email</Label>
                                         <Input
                                             type="email"
@@ -375,9 +378,9 @@ const CertificateGenerator = () => {
                                                 setEmail(e.target.value)
                                             }
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="flex gap-2">
-                                        <Button
+                                        {/* <Button
                                             onClick={handleSendEmail}
                                             disabled={isSending || !email}
                                             className="flex items-center gap-2"
@@ -386,7 +389,7 @@ const CertificateGenerator = () => {
                                             {isSending
                                                 ? "Sending..."
                                                 : "Send Certificate"}
-                                        </Button>
+                                        </Button> */}
                                         <Button
                                             variant="outline"
                                             onClick={handleDownloadPDF}
@@ -840,23 +843,23 @@ const CertificateGenerator = () => {
                             <Card className="mt-6">
                                 <CardHeader>
                                     <CardTitle className="text-xl">
-                                        Send Certificate
+                                         Certificate
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Recipient Email</Label>
-                                        <Input
+                                        {/* <Label>Recipient Email</Label> */}
+                                        {/* <Input
                                             type="email"
                                             placeholder="Enter recipient email"
                                             value={email}
                                             onChange={(e) =>
                                                 setEmail(e.target.value)
                                             }
-                                        />
+                                        /> */}
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button
+                                        {/* <Button
                                             onClick={handleSendEmail}
                                             disabled={isSending || !email}
                                             className="flex items-center gap-2"
@@ -865,7 +868,7 @@ const CertificateGenerator = () => {
                                             {isSending
                                                 ? "Sending..."
                                                 : "Send Certificate"}
-                                        </Button>
+                                        </Button> */}
                                         <Button
                                             variant="outline"
                                             onClick={handleDownloadPDF}

@@ -1,7 +1,6 @@
 import { RESPONSE_MESSAGES } from "../constants/responseMessage.constants.js";
 import { HTTP_STATUS } from "../constants/statusCode.constants.js";
 import routineService from "../services/routine.service.js";
-// import routineService from "../services/routine.service.js";
 import { sendResponse } from "../utils/response.handler.js";
 
 class RoutineController {

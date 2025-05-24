@@ -16,7 +16,7 @@ import {
     SelectContent,
     SelectItem,
 } from "../ui/select";
-import { Users, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { Users, ChevronDown, ChevronUp, Trash2, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
 import { useAuthStore } from "../../store/authStore";
@@ -104,7 +104,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [], onDelete }) => {
 
     return (
         <div className="w-full space-y-4 p-0">
-            {/* Filter & Search Row */}
             <div className="flex flex-col md:flex-row justify-end items-start md:items-center gap-2 w-full">
                 <Input
                     type="text"
@@ -130,7 +129,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [], onDelete }) => {
                 </Select>
             </div>
 
-            {/* Table */}
             <div className="overflow-x-auto rounded-md border dark:border-slate-800">
                 <Table>
                     <TableHeader>
@@ -157,7 +155,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [], onDelete }) => {
                                     />
                                 </div>
                             </TableHead>
-                            {/* <TableHead className="text-center">Phone</TableHead> */}
                             <TableHead className="text-center">Email</TableHead>
                             {role === "hod" && <TableHead className="text-center">Actions</TableHead>}
                         </TableRow>
@@ -185,9 +182,6 @@ const MemberList: React.FC<MemberListProps> = ({ data = [], onDelete }) => {
                                         <TableCell className="text-center">
                                             {member?.name || "—"}
                                         </TableCell>
-                                        {/* <TableCell className="text-center">
-                                            {member?.phone || "—"}
-                                        </TableCell> */}
                                         <TableCell className="text-center">
                                             {member?.email || "—"}
                                         </TableCell>

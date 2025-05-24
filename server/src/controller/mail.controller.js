@@ -10,7 +10,7 @@ class MailController {
     // Handle single string
     if (typeof To === "string") {
       try {
-        await mailService.sendMail(To);
+        await mailService.sendMail(To,subject,body);
 
         return sendResponse(res, {
           status: HTTP_STATUS.CREATED,
@@ -56,6 +56,30 @@ class MailController {
       success: false,
     });
   }
+
+  // async certificateMail(req, res) {
+  //   const { To, subject,body } = req.body;
+
+  //     try {
+  //       await mailService.certificateMail(To,subject,body);
+
+  //       return sendResponse(res, {
+  //         status: HTTP_STATUS.CREATED,
+  //         message: "Email sent successfully.",
+  //         success: true,
+  //         data: { recipients: To },
+  //       });
+  //     } catch (error) {
+  //       return sendResponse(res, {
+  //         status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+  //         message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+  //         success: false,
+  //         error: error.message || error,
+  //       });
+  //     }
+  //   }
+
+
 }
 
 export default new MailController();

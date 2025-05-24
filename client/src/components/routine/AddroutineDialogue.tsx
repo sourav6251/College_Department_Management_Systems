@@ -44,7 +44,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
                 const response = await axiosInstance.get("/user/getbyfaculty");
                 setFacultyList(response.data.data);
             } catch (err) {
-                setError("Failed to fetch faculty list");
                 console.error(err);
             } finally {
                 setFetchingFaculty(false);
@@ -69,7 +68,7 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
                         timeSlots: [
                             {
                                 paperCode,
-                                professor, // This is now the selected professor's ID
+                                professor, 
                                 startTime: new Date(`2025-01-01 ${startTime}`),
                                 endTime: new Date(`2025-01-01 ${endTime}`),
                             },
@@ -81,7 +80,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
             const response = await axiosInstance.post("/routines", routineData);
             console.log("Routine Added:", response.data);
 
-            // Clear form after submit
             setPaperCode("");
             setProfessor("");
             setClassType("");
@@ -90,7 +88,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
             setStartTime("");
             setEndTime("");
 
-            // Notify parent component to refresh routines
             onRoutineAdded();
         } catch (err) {
             setError(err.response?.data?.message || "Failed to add routine");
@@ -124,7 +121,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
                         onChange={(e) => setPaperCode(e.target.value)}
                     />
                     
-                    {/* Faculty Select Dropdown */}
                     <Select
                         value={professor}
                         onValueChange={(value) => setProfessor(value)}
@@ -142,13 +138,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
                         </SelectContent>
                     </Select>
 
-                    {/* <Input
-                        placeholder="Type (Lab, Lecture, etc...)"
-                        value={classType}
-                        onChange={(e) => setClassType(e.target.value)}
-                    /> */}
-
-                    {/* Semester selection */}
                     <Select
                         value={semester}
                         onValueChange={(value) => setSemester(value)}
@@ -166,7 +155,6 @@ const AddRoutineDialog = ({ onRoutineAdded }) => {
                         </SelectContent>
                     </Select>
 
-                    {/* Day selection */}
                     <Select
                         value={day}
                         onValueChange={(value) => setDay(value)}

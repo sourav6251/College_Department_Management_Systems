@@ -19,7 +19,6 @@ import {
     Users,
 } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
-import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../store/authStore";
 import { Navigate, useNavigate } from "react-router-dom";
 import apiStore from "../api/apiStore";
@@ -65,7 +64,7 @@ const Login = () => {
             password:password,
             role:selectedRole
             }
-           const response= await apiStore.userCreate(loginData);
+           const response= await apiStore.userlogin(loginData);
            
 
             const user = response.data?.data;

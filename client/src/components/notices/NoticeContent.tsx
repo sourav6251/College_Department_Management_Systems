@@ -30,14 +30,11 @@ import {
 } from "../../components/ui/card";
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
-import axiosInstance from "../../api/axiosInstance";
-import ApiFunction from "../../service/ApiFunction";
 import apiStore from "../../api/apiStore";
 
 const NoticeContent = ({ notice, refreshNotices }) => {
     const role = useAuthStore((state) => state.role);
 
-    // State for edit form
     const [editFormData, setEditFormData] = useState({
         title: notice.title,
         description: notice.description,
@@ -45,15 +42,6 @@ const NoticeContent = ({ notice, refreshNotices }) => {
     });
     const [editLoading, setEditLoading] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
-    const handleDownload = () => {
-        if (notice.media && notice.media.length > 0) {
-            const { url } = notice.media[0];
-            window.open(url, "_blank");
-        } else {
-            toast.error("No media available for download");
-        }
-    };
 
     const handleEditInputChange = (e) => {
         const { name, value } = e.target;
@@ -76,7 +64,6 @@ const NoticeContent = ({ notice, refreshNotices }) => {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
 
-        // Client-side validation
         if (editFormData.title.length < 3 || editFormData.title.length > 60) {
             toast.error("Title must be 3-60 characters");
             return;
@@ -88,30 +75,14 @@ const NoticeContent = ({ notice, refreshNotices }) => {
 
         setEditLoading(true);
         try {
-            // let media = notice.media || [];
-            // if (editFormData.file) {
-            //     const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
-            //     media = [
-            //         {
-            //             url: cloudinaryResponse.secure_url,
-            //             public_id: cloudinaryResponse.public_id,
-            //         },
-            //     ];
-            // }
 
             const updateData =new FormData();
             
             updateData.append("title", editFormData.title);
             updateData.append("description", editFormData.description);
             updateData.append("media", editFormData.file);
-            //  {
-            //     title: editFormData.title,
-            //     description: editFormData.description,
-            //     media,
-            // };
 
             const response = await apiStore.noticeboardEdit(notice._id,updateData)
-            // const response = await axiosInstance.patch(`/noticeboard/${notice._id}`, updateData);
             toast.success(response.data.message || "Notice updated successfully");
 
             setIsEditDialogOpen(false);
@@ -124,13 +95,45 @@ const NoticeContent = ({ notice, refreshNotices }) => {
             setEditLoading(false);
         }
     };
-
+    const handleDownload = async () => {
+        if (notice.media && notice.media.length > 0) {
+            try {
+                let { url } = notice.media[0];
+                
+                const response = await fetch(url);
+                const blob = await response.blob();
+                
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                
+                const filename = url.split('/').pop().split('?')[0] || 'notice';
+                link.download = filename;
+                
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+                
+            } catch (error) {
+                console.error('Download failed:', error);
+                toast.error('Failed to download file');
+            }
+        } else {
+            toast.error("No media available for download");
+        }
+    };
+    
     const handleDelete = async () => {
         try {
             await apiStore.noticeboardDelete(notice._id)
-            // await axiosInstance.delete(`/noticeboard/${notice._id}`);
             toast.success("Notice deleted successfully");
-            if (refreshNotices) refreshNotices();
+            if (refreshNotices) {
+                await refreshNotices(); // Add await here
+            }
+            // if (refreshNotices) refreshNotices();
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to delete notice");
         }
@@ -165,7 +168,7 @@ const NoticeContent = ({ notice, refreshNotices }) => {
                             <SheetTitle>{notice.title}</SheetTitle>
                             <SheetDescription>
                                 <p>{notice.description}</p>
-                                {notice.media && notice.media.length > 0 && (
+                                {notice.media!=null && notice.media.length > 0 && (
                                     <div className="mt-4">
                                         <p>Media:</p>
                                         {notice.media[0].url.match(/\.(jpeg|jpg|png|gif)$/i) ? (

@@ -1,5 +1,3 @@
-// import { Routines } from "../model/routine.model.js";
-
 import { Routines } from "../model/routine.model.js";
 
 
@@ -39,13 +37,7 @@ class RoutineService {
                 .populate("semester", "name")
                 .populate("schedules.timeSlots.professor", "name email");
         } 
-        // else {
-        //     routines = await Routines.find()
-        //         .populate("user", "name email")
-        //         .populate("department", "name")
-        //         .populate("semester", "name")
-        //         .populate("schedules.timeSlots.professor", "name email");
-        // }
+       
 
         return routines || null;
     }

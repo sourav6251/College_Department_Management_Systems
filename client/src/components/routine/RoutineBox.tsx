@@ -44,7 +44,7 @@ const RoutineBox = ({ sem, refreshKey }) => {
         try {
             apiStore.routinesDelete(routineId)
             toast.success("Routine deleted successfully");
-            if (refreshKey) refreshKey();
+            if (refreshKey) await refreshKey();
         } catch (err) {
             toast.error(err.response?.data?.message || "Failed to delete routine");
         }
@@ -103,9 +103,6 @@ const RoutineBox = ({ sem, refreshKey }) => {
                                                         <div className="flex-1">
                                                             <p className="text-sm text-gray-600 dark:text-gray-400">
                                                                 {slot.professor?.name || "Unknown Professor"}
-                                                            </p>
-                                                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                                Room: {slot.room || "TBD"}
                                                             </p>
                                                         </div>
                                                     </div>

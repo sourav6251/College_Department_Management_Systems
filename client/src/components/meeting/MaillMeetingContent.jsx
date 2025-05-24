@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -12,47 +11,24 @@ import {
     Clock,
     Users,
     MapPin,
-    Trash2,
-    FilePenLine,
+   
 } from "lucide-react";
 import { parse, isToday, isFuture } from "date-fns";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import { toast } from "sonner";
-import axiosInstance from "../../api/axiosInstance";
 import apiStore from "../../api/apiStore";
 
 const MaillMeetingContent = ({
     id,
     title,
     description,
-    date_time, // Expected: ISO string (e.g., "2025-05-23T03:10:00.000Z")
+    date_time, 
     participantsNo,
     participants,
     location,
-    // onDelete,
 }) => {
     console.log("date_time=> ", date_time);
 
-    // Parse date_time into date (dd-MM-yyyy) and time (HH:mm)
     const parsedDateTime = new Date(date_time);
     const date = parsedDateTime
         .toLocaleDateString("en-GB", {
@@ -61,30 +37,21 @@ const MaillMeetingContent = ({
             year: "numeric",
         })
         .split("/")
-        .join("-"); // e.g., "23-05-2025"
+        .join("-"); 
     const time = parsedDateTime.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-    }); // e.g., "03:10"
-
-    // Initialize datetime for datetime-local input
+    });
     const initialDatetime = () => {
         try {
-            return parsedDateTime.toISOString().slice(0, 16); // e.g., "2025-05-23T03:10"
+            return parsedDateTime.toISOString().slice(0, 16); 
         } catch {
             return "";
         }
     };
 
-    const [meetingData, setMeetingData] = useState({
-        title,
-        description,
-        datetime: initialDatetime(), // Combined date and time
-        location,
-    });
 
-    // Parse date for status calculation
     const parseDate = (dateStr) => parse(dateStr, "dd-MM-yyyy", new Date());
 
     let status;
@@ -101,68 +68,7 @@ const MaillMeetingContent = ({
         background = "bg-[#838586]";
     }
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        const { id, value } = e.target;
-        setMeetingData((prev) => ({ ...prev, [id]: value }));
-    };
 
-    // Handle edit form submission
-    const submitEdit = async (e) => {
-        e.preventDefault();
-        const data = {
-            title: meetingData.title,
-            description: meetingData.description,
-            meetingTime: new Date(meetingData.datetime).toISOString(), // e.g., "2025-05-23T03:10:00.000Z"
-            mettingArea: meetingData.location, // Match backend schema
-        };
-
-        try {
-            console.log("Sending edit data:", data);
-            await apiStore.meetingEdit(id,data)
-            // await axiosInstance.patch(`/meeting/${id}`, data);
-            toast.success("Meeting updated successfully!");
-        } catch (error) {
-            console.error(
-                "submitEdit error:",
-                error.response?.data || error.message
-            );
-            toast.error(
-                "Failed to update meeting: " +
-                    (error.response?.data?.message || error.message)
-            );
-        }
-    };
-    const notify = async () => {
-        // to = participants;
-        let subject = `Reminder: ${title} scheduled on ${date} at ${time}`;
-        console.log("participants=> ", participants);
-        try {
-            await apiStore.meetingMail(participants, title, subject);
-            toast.success("mail send Successfully")
-        } catch (error) {
-            toast.error("Something Wrong")
-            console.error(error)
-
-        }
-    };
-
-    const handleDelete = async () => {
-        try {
-            await apiStore.meetingDelete(id)
-            toast.success("Meeting deleted successfully!");
-            onDelete();
-        } catch (error) {
-            console.error(
-                "handleDelete error:",
-                error.response?.data || error.message
-            );
-            toast.error(
-                "Failed to delete meeting: " +
-                    (error.response?.data?.message || error.message)
-            );
-        }
-    };
 
     return (
         <Card className="my-4 shadow-lg border border-gray-200 rounded-2xl transition hover:shadow-xl">

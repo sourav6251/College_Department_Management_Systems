@@ -1,8 +1,7 @@
-// Creating this file since it's required in the Index.jsx but wasn't in the included files
 import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { useThemeStore, useDashboardStore } from "@/store";
-import { Moon, Sun, Bell, Search, User } from "lucide-react";
+import { useThemeStore } from "@/store";
+import { Moon, Sun, Bell, Search } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import {
     DropdownMenu,
@@ -15,7 +14,6 @@ import {
 
 export function Header() {
     const { theme, toggleTheme } = useThemeStore();
-    const { notifications } = useDashboardStore();
     const isDarkMode = theme === "dark";
 
     const { user } = useAuthStore();
@@ -27,7 +25,6 @@ export function Header() {
         toggleTheme();
     }, [toggleTheme]);
 
-    const unreadCount = notifications.filter((n) => !n.read).length;
 
     return (
         <header className="border-b border-border h-16 px-4 flex items-center justify-between bg-background">
@@ -49,12 +46,6 @@ export function Header() {
                     className="relative"
                     aria-label="Notifications"
                 >
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                        <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">
-                            {unreadCount}
-                        </span>
-                    )}
                 </Button>
 
                 <Button
@@ -82,11 +73,7 @@ export function Header() {
                             aria-label="User profile"
                         >
                              <img src="favicon.ico"  className="h-5 w-5 " />
-                            {/* {user?.profile_pic?.url ? (
-                                <img src={user?.profile_pic?.url} />
-                            ) : (
-                                <User className="h-5 w-5" />
-                            )} */}
+                          
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>

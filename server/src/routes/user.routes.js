@@ -5,6 +5,7 @@ import {
     createUser,
     deleteUser,
     getAllUser,
+    getUsersByDepartment,
     logInUser,
     sendOtpForVerifyAccount,
     updateUser,
@@ -88,6 +89,7 @@ router
                 });
             }
         }
-    );
+    )
+    .get("/departmentuser/:departmentID",getUsersByDepartment);
 
 export const userRouter = router;

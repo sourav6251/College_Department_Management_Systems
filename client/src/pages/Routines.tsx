@@ -7,8 +7,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../components/ui/select";
-import { Button } from "../components/ui/button";
-// import AddRoutineDialog from "../components/routine/AddRoutineDialog";
 import RoutineBox from "../components/routine/RoutineBox";
 import AddRoutineDialog from "../components/routine/AddroutineDialogue";
 import { useAuthStore } from "../store/authStore";
@@ -18,7 +16,7 @@ const Routines = () => {
     const [refreshKey, setRefreshKey] = useState(0);
 const role=useAuthStore((state)=>state.role)
     const handleRoutineAdded = () => {
-        setRefreshKey((prev) => prev + 1); // Force RoutineBox to refetch
+        setRefreshKey((prev) => prev + 1); 
     };
 
     return (
@@ -54,7 +52,7 @@ const role=useAuthStore((state)=>state.role)
             </header>
            
             <div>
-                <RoutineBox sem={semester} key={refreshKey} />
+                <RoutineBox sem={semester} refreshKey={refreshKey} />
             </div>  
         </section>
     );

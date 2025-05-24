@@ -14,14 +14,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../components/ui/dialog";
-// import { useAuthStore } from "../store/authStore";
 import { toast } from "sonner";
-import ApiFunction from "../service/ApiFunction";
-import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../store/authStore";
 import apiStore from "../api/apiStore";
-// import axiosInstance from "../../api/axiosInstance"; // Assuming axiosInstance is configured
-// import ApiFunction from "../utils/apiFunction"; // For Cloudinary upload
 
 const containerVariants = {
     hidden: {},
@@ -82,13 +77,14 @@ const NoticeBoard = () => {
             formDataToSend.append("title", formData.title);
             formDataToSend.append("description", formData.description);
             
-            // if (formData.file) {
-            //     if (formData.file !== "application/pdf") {
-            //     // if (formData.file.type !== "application/pdf") {
-            //         throw new Error("Only PDF files are allowed");
-            //     }
+            if (formData.file) {
+              
                 formDataToSend.append("media", formData.file); 
-            // }
+            }
+            else{
+                toast.error("file required")
+                return
+            }
     
             const response = await apiStore.noticeboardCreate(formDataToSend);
             
@@ -105,6 +101,13 @@ const NoticeBoard = () => {
             setLoading(false);
         }
     };
+    // const featchUser=(async()=>{
+    //     try {
+    //         const resultawait
+    //     } catch (error) {
+            
+    //     }
+    // })
 
     useEffect(() => {
         if (departmentID) {
@@ -127,6 +130,7 @@ const NoticeBoard = () => {
                             <Button
                                 variant="default"
                                 className="flex flex-row items-center justify-center"
+                                // onClick={featchUser}
                             >
                                 <Plus />
                                 <span>Create Notice</span>
@@ -200,7 +204,7 @@ const NoticeBoard = () => {
                 ) : (
                     notices.map((notice) => (
                         <motion.div variants={itemVariants} key={notice._id}>
-                            <NoticeContent notice={notice} />
+                            <NoticeContent notice={notice} refreshNotices={fetchNotices}/>
                         </motion.div>
                     ))
                 )}

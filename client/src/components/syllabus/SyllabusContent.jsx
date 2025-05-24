@@ -32,11 +32,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
 import axiosInstance from "../../api/axiosInstance";
-import ApiFunction from "../../service/ApiFunction";
 import apiStore from "../../api/apiStore";
 
-const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
-    console.log("syllabi=>", syllabi);
+const SyllabusContent = ({ syllabus = [], refreshSyllabus }) => {
+    console.log("syllabus=>", syllabus);
 
     const [searchTerm, setSearchTerm] = useState("");
     const { role, userId, departmentid } = useAuthStore((state) => ({
@@ -53,25 +52,51 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
     const [editLoading, setEditLoading] = useState(false);
     const [semesters, setSemesters] = useState([]);
 
-    const filteredData = syllabi.filter(
+    const filteredData = syllabus.filter(
         (item) =>
             item.paperCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.paperName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleDownload = (media) => {
-        if (media && media.length > 0) {
-            window.open(media[0].mediaUrl, "_blank");
-        } else {
-            toast.error("No media available for download");
+    const handleDownload = async (media) => {
+        try {
+            // Check if media exists and has mediaUrl
+            if (!media?.mediaUrl) {
+                toast.error("No media available for download");
+                return;
+            }
+    
+            const mediaUrl = media.mediaUrl;
+            console.log("mediaUrl=> ", mediaUrl);
+    
+            const response = await fetch(mediaUrl);
+            const blob = await response.blob();
+            
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            
+            const filename = mediaUrl.split('/').pop().split('?')[0] || 'syllabus';
+            link.download = filename;
+            
+            document.body.appendChild(link);
+            link.click();
+            
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+            
+        } catch (error) {
+            console.error('Download failed:', error);
+            toast.error('Failed to download file');
         }
     };
-
+    
     const handleDelete = async (syllabusId) => {
         try {
             await apiStore.syllabusDelete(syllabusId)
             toast.success("Syllabus deleted successfully");
-            refreshSyllabus();
+            if (refreshSyllabus) await refreshSyllabus();
         } catch (error) {
             console.error("Failed to delete syllabus:", error);
             toast.error(error.response?.data?.message || "Failed to delete syllabus");
@@ -110,21 +135,8 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
             updateData.append("media", editFormData.file);
             
 
-            // if (editFormData.file) {
-            //     const cloudinaryResponse = await ApiFunction.uploadCoudinary(editFormData.file);
-            //     updateData.media = [
-            //         {
-            //             mediaUrl: cloudinaryResponse.secure_url,
-            //             mediaID: cloudinaryResponse.public_id,
-            //         },
-            //     ];
-            // }
-
-            // console.log("Updating syllabus:", updateData);
-
             const response =await apiStore.syllabusEdit(syllabusId,updateData)
 
-            // const response = await axiosInstance.patch(`/syllabus/${syllabusId}`, updateData);
             toast.success(response.data.message || "Syllabus updated successfully");
             refreshSyllabus();
         } catch (error) {
@@ -158,7 +170,6 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
 
     return (
         <>
-            {/* Search Input */}
             <div className="mb-4 w-full">
                 <Input
                     type="text"
@@ -215,37 +226,34 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
                                                             {syllabus.paperName}
                                                         </span>
                                                     </SheetTitle>
-                                                    <SheetDescription>
-                                                        {syllabus.media && syllabus.media.length > 0 ? (
-                                                            syllabus.media[0].mediaUrl.match(
-                                                                /\.(jpeg|jpg|png|gif)$/i
-                                                            ) ? (
-                                                                <img
-                                                                    src={syllabus.media[0].mediaUrl}
-                                                                    alt="Syllabus Media"
-                                                                    className="mt-2 max-w-full h-auto"
-                                                                />
-                                                            ) : (
-                                                                <a
-                                                                    href={syllabus.media[0].mediaUrl}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-blue-600 underline"
-                                                                >
-                                                                    View PDF
-                                                                </a>
-                                                            )
-                                                        ) : (
-                                                            "No media available"
-                                                        )}
-                                                    </SheetDescription>
+                                                   
+<SheetDescription>
+    {syllabus.media && syllabus.media.length > 0 ? (
+        syllabus.media[0].mediaUrl.match(/\.(jpeg|jpg|png|gif)$/i) ? (
+            <img
+                src={syllabus.media[0].mediaUrl}
+                alt="Syllabus Media"
+                className="mt-2 max-w-full h-auto"
+            />
+        ) : (
+            <iframe
+                src={`https://docs.google.com/viewer?url=${encodeURIComponent(syllabus.media[0].mediaUrl)}&embedded=true`}
+                style={{ width: '100%', height: '500px', border: 'none' }}
+                title="PDF Viewer"
+            />
+        )
+    ) : (
+        "No media available"
+    )}
+</SheetDescription>
                                                 </SheetHeader>
                                             </SheetContent>
                                         </Sheet>
 
                                         <Button
                                             variant={"ghost"}
-                                            onClick={() => handleDownload(syllabus.media)}
+                                            
+    onClick={() => handleDownload(syllabus.media[0])}
                                         >
                                             <ArrowDownToLine />
                                         </Button>
@@ -379,7 +387,7 @@ const SyllabusContent = ({ syllabi = [], refreshSyllabus }) => {
                                 colSpan={4}
                                 className="text-center text-gray-400 italic"
                             >
-                                No matching syllabi found.
+                                No matching syllabus found.
                             </TableCell>
                         </TableRow>
                     )}

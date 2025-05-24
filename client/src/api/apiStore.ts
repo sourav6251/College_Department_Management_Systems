@@ -26,11 +26,10 @@ class APIStore {
     async semesterGet() {}
     async semesterEdit() {}
     async semesterDelete() {}
-    async userCreate(user: LoginData) {
+    async userlogin(user: LoginData) {
         return await axiosInstance.post("/user/login", user);
     }
     async memberGetByRole(display) {
-        // const response = 
         console.log("display  =>",display);
         
         return await axiosInstance.post("/user/get", {
@@ -40,7 +39,10 @@ class APIStore {
     async userGetByRole() {
         return await axiosInstance.get("/user/get-by-roles");
     }
-    async userEdit() {}
+    async getDepartmentUsers(departmentID) {
+
+        return await axiosInstance.get(`/user/departmentuser/${departmentID}`);
+    }
     async userDelete() {}
     async meetingCreate(data) {
         console.log("data=> ", data);
@@ -52,7 +54,6 @@ class APIStore {
     } 
        async meetingGetByEmail(email) {
         return await axiosInstance.get(`/meeting/email/${email}`)
-    //   return  await axiosInstance.get(`/meeting/${userId}`);
     }
     async meetingEdit(id,data) {
         await axiosInstance.patch(`/meeting/${id}`, data);
@@ -95,7 +96,11 @@ class APIStore {
     }
     async certificateGet() {}
     async certificateEdit() {}
-    async mail() {}
+    // async certificateMail(To,subject,body) {
+    //     const bodys={
+    //     To:To, subject:subject,body:body
+    // }
+    // return await axiosInstance.post(`/mail/certificate`,bodys);}
     async meetingMail(To,subject,body) {
         const bodys={
             To:To, subject:subject,body:body

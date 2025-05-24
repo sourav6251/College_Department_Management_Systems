@@ -76,7 +76,7 @@ College Management System`;
     console.error("❌ Error sending routine emails:", err);
   }
 };
-
+  //minute hour
 const job = new CronJob(
   "48 18 * * *", 
   sendRoutineMails,
