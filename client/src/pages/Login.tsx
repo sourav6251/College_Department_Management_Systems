@@ -74,10 +74,10 @@ const Login = () => {
             navigate("/");
         } catch (error: any) {
             console.error(
-                "Login error:",
-                error.response?.data || error.message
+                "Login error:"
+                //, error.response?.data || error.message
             );
-            alert("Login failed. Please check your credentials.");
+            // alert("Login failed. Please check your credentials.");
         } finally {
             setLoading(false);
         }
