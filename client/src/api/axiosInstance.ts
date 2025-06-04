@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "college-department-management-systems-qq55jaydp.vercel.app/api/v1",
+    baseURL: "https://college-department-management-systems.onrender.com/api/v1",
     // baseURL: "http://localhost:5000/api/v1",
     withCredentials: true,
 });
