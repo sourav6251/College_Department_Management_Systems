@@ -19,10 +19,15 @@ import {
     Users,
 } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
-import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../store/authStore";
 import { Navigate, useNavigate } from "react-router-dom";
+import apiStore from "../api/apiStore";
 
+interface LoginData {
+    email: string;
+    password: string;
+    role: string; 
+}  
 const Login = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [activeTab, setActiveTab] = useState("role");
@@ -54,11 +59,13 @@ const Login = () => {
 
         try {
             setLoading(true);
-            const response = await axiosInstance.post("/user/login", {
-                email,
-                role: selectedRole,
-                password,
-            });
+           let loginData: LoginData ={
+            email:email,
+            password:password,
+            role:selectedRole
+            }
+           const response= await apiStore.userlogin(loginData);
+           
 
             const user = response.data?.data;
             useAuthStore.getState().login(user, response?.data?.token);
@@ -67,10 +74,10 @@ const Login = () => {
             navigate("/");
         } catch (error: any) {
             console.error(
-                "Login error:",
-                error.response?.data || error.message
+                "Login error:"
+                //, error.response?.data || error.message
             );
-            alert("Login failed. Please check your credentials.");
+            // alert("Login failed. Please check your credentials.");
         } finally {
             setLoading(false);
         }

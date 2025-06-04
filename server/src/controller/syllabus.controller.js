@@ -1,3 +1,4 @@
+
 import syllabusService from "../services/syllabus.service.js";
 import { sendResponse } from "../utils/response.handler.js";
 import { HTTP_STATUS } from "../constants/statusCode.constants.js";
@@ -5,131 +6,149 @@ import { RESPONSE_MESSAGES } from "../constants/responseMessage.constants.js";
 
 class SyllabusController {
     async createSyllabus(req, res) {
-        console.log('Enter  into syllabus ');
-        
+        console.log("req.body => ", req.body);
+        console.log("req.file => ", req.file);
+
         try {
-            const syllabus = await syllabusService.createSyllabus(req.body);
-console.log("syllabus",syllabus);
+            const { user, department, semester, paperName, paperCode } =
+                req.body;
+            const media = req.file;
+
+            const syllabusData = {
+                user,
+                department,
+                semester,
+                paperCode,
+                paperName,
+                media,
+            };
+            console.log("syllabusData=> ", syllabusData);
+
+            const syllabus = await syllabusService.createSyllabus(syllabusData);
 
             return sendResponse(res, {
                 status: HTTP_STATUS.CREATED,
-                message: RESPONSE_MESSAGES.SYLLABUS_CREATED,
+                message:
+                    RESPONSE_MESSAGES.SYLLABUS_CREATED ||
+                    "Syllabus created successfully",
                 success: true,
-                data: syllabus, 
+                data: syllabus,
             });
         } catch (error) {
+            console.error("Create syllabus error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                message: error.message || RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error: error
             });
         }
     }
 
     async updateSyllabus(req, res) {
+        console.log("req.body => ", req.body);
+        console.log("req.file => ", req.file);
+
         try {
-            const syllabus = await syllabusService.updateSyllabus(req.body, req.params.syllabusId);
+            const id = req.params.syllabusId;
+            const { semester, paperCode,paperName } = req.body;
+            const media = req.file;
+
+         
+
+            const updateData = {
+                semester,
+                paperCode,
+                paperName,
+                media,
+            };
+
+            const syllabus = await syllabusService.updateSyllabus(
+                id,
+                updateData
+            );
+
+            if (!syllabus) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.NOT_FOUND,
+                    message: "Syllabus not found",
+                    success: false,
+                });
+            }
+console.log("syllabus=>  ",syllabus);
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
-                message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
+                message:
+                    RESPONSE_MESSAGES.SYLLABUS_UPDATED ||
+                    "Syllabus updated successfully",
                 success: true,
                 data: syllabus,
             });
         } catch (error) {
+            console.error("Update syllabus error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-                message: RESPONSE_MESSAGES.INTERNAL_ERROR,
+                message: error.message || RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error: error
             });
         }
     }
 
     async showSyllabus(req, res) {
         try {
-            const syllabus = await syllabusService.showSyllabus(req.params.departmentid);
-            console.log(`syllabus => ${syllabus} `);
-
-
-            if (syllabus) {
-                return sendResponse(res, {
-                    status: HTTP_STATUS.OK,
-                    message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
-                    success: true,
-                    data: syllabus,
-                });
-
-            }
+            const syllabus = await syllabusService.showSyllabus(
+                req.params.departmentid
+            );
 
             return sendResponse(res, {
-                status: HTTP_STATUS.NO_CONTENT,
-                message: RESPONSE_MESSAGES.SYLLABUS_UPDATED,
+                status: HTTP_STATUS.OK,
+                message:
+                    RESPONSE_MESSAGES.SYLLABUS_FETCHED ||
+                    "Syllabus fetched successfully",
                 success: true,
-                data: syllabus,
+                data: syllabus || [],
             });
         } catch (error) {
+            console.error("Show syllabus error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error: error
             });
         }
     }
 
     async deleteSyllabus(req, res) {
         try {
-            const syllabus = await syllabusService.deleteSyllabus(req.params.syllabusId);
+            const syllabus = await syllabusService.deleteSyllabus(
+                req.params.syllabusId
+            );
+
+            if (!syllabus) {
+                return sendResponse(res, {
+                    status: HTTP_STATUS.NOT_FOUND,
+                    message: "Syllabus not found",
+                    success: false,
+                });
+            }
 
             return sendResponse(res, {
                 status: HTTP_STATUS.OK,
-                message: RESPONSE_MESSAGES.SYLLABUS_DELETE,
+                message:
+                    RESPONSE_MESSAGES.SYLLABUS_DELETE ||
+                    "Syllabus deleted successfully",
                 success: true,
                 data: syllabus,
             });
         } catch (error) {
+            console.error("Delete syllabus error:", error);
             return sendResponse(res, {
                 status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
                 message: RESPONSE_MESSAGES.INTERNAL_ERROR,
                 success: false,
-                error: error
             });
         }
     }
 }
+
 export default new SyllabusController();
-
-// base path : api/v1/syllebus
-
-//        1. create - (post method)
-//          - authenticate
-//          - only hod can create syllebus
-//          - payload : {
-//               - userId ,
-//               - deparmantalId ,
-//               - semId ,
-//               - paperCode
-//               - paperName
-//               - media
-//            }
-
-//       2. update - (patch method)
-//          - authenticate
-//          - only hod can update syllebus
-//          - payload :
-//             body : {
-//               - userId ,
-//               - deparmantalId ,
-//               - semId ,
-//               - paperCode
-//               - paperName
-//               - media
-//            }
-//            params : { syllebusId }
-
-//       3. delete - (delete method)
-//          - authenticate
-//          - only hod can delete syllebus
-//          - payload : param : { syllebusId }

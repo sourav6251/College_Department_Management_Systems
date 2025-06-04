@@ -2,7 +2,6 @@ import { UserService } from "../services/user.service.js";
 import { HTTP_STATUS } from "../constants/statusCode.constants.js";
 import { RESPONSE_MESSAGES } from "../constants/responseMessage.constants.js";
 import { sendResponse } from "../utils/response.handler.js";
-import { Users } from "../model/user.model.js";
 
 export const createUser = async (req, res) => {
     try {
@@ -61,9 +60,7 @@ export const logInUser = async (req, res) => {
         // console.log("----" , req.body);
         
         const result = await UserService.loginUser(req.body, res);
-        // if (result.requiresTwoStep) {
-        //   return sendResponse(res, { status: HTTP_STATUS.OK, success: true, message: "Verification code sent to your email" });
-        // }
+
     } catch (error) {
         sendResponse(res, {
             status: HTTP_STATUS.BAD_REQUEST,
@@ -154,8 +151,27 @@ export const updateUser = async (req, res) => {
 
 export const getAllUser = async (req, res) => {
     try {
-        // const user = await Users.find({ role: req.body.role });
         const user=await  UserService.getAllUser({role: req.body.role })
+        sendResponse(res, {
+            status: HTTP_STATUS.OK,
+            success: true,
+            message: "User fetched successfully.",
+            data: user,
+        });
+    } catch (error) {
+        sendResponse(res, {
+            status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+            success: false,
+            message: error.message,
+            error,
+        });
+    }
+};
+
+export const getUsersByDepartment=async(req,res)=>{
+
+    try {
+        const user=await  UserService.getDepartmentUserEmails(req.params.departmentID)
         sendResponse(res, {
             status: HTTP_STATUS.OK,
             success: true,

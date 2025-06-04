@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import Footer from "./Footer";
+import React  from "react";
+import {  Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { useAuthStore } from "../../store/authStore";
 
 function Layout() {
     return (
@@ -14,7 +12,6 @@ function Layout() {
                 <main className="flex-1 p-3 overflow-auto">
                     <Outlet />
                 </main>
-                {/* <Footer/> */}
             </div>
         </div>
     );

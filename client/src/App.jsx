@@ -19,7 +19,7 @@ import {
     Settings,
     Syllabus,
 } from "./pages";
-import AuthForm from "./pages/Login";
+
 
 const App = () => (
     <ThemeProvider>
